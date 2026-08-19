@@ -26,8 +26,11 @@ jobs:
         shell: python3 {0}
         run: |
           import json
+          import re
+          from datetime import datetime
           from pathlib import Path
 
+          schema_path = Path("schemas/v1/learning-event.schema.json")
           required = [
               Path("README.md"),
               Path("AGENTS.md"),
@@ -36,7 +39,7 @@ jobs:
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
-              Path("schemas/learning-event.schema.json"),
+              schema_path,
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
@@ -46,11 +49,28 @@ jobs:
               with path.open(encoding="utf-8") as handle:
                   json.load(handle)
 
-          schema = json.loads(Path("schemas/learning-event.schema.json").read_text(encoding="utf-8"))
+          schema = json.loads(schema_path.read_text(encoding="utf-8"))
           if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
               raise SystemExit("learning event schema must use JSON Schema Draft 2020-12")
-          if not schema.get("$id"):
-              raise SystemExit("learning event schema must declare a stable $id")
+          if schema.get("x-cwl-schema-version") != "1.0.0":
+              raise SystemExit("learning event schema must declare schema version 1.0.0")
+          expected_id = "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/schemas/v1/learning-event.schema.json"
+          if schema.get("$id") != expected_id:
+              raise SystemExit("learning event schema $id must match the versioned published path")
+
+          for field_name in ("occurred_at", "recorded_at"):
+              field = schema["properties"][field_name]
+              if field.get("format") != "date-time" or not field.get("pattern"):
+                  raise SystemExit(f"{field_name} must require date-time format and a syntax pattern")
+              pattern = re.compile(field["pattern"])
+              valid = "2026-08-19T14:00:00Z"
+              invalid = ("2026-08-19", "not-a-date", "2026-08-19T14:00:00")
+              if not pattern.fullmatch(valid):
+                  raise SystemExit(f"{field_name} pattern rejects a valid RFC 3339 timestamp")
+              datetime.fromisoformat(valid.replace("Z", "+00:00"))
+              for candidate in invalid:
+                  if pattern.fullmatch(candidate):
+                      raise SystemExit(f"{field_name} pattern accepts invalid timestamp syntax: {candidate}")
 
           forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
           for path in required:
