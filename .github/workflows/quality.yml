@@ -1,0 +1,62 @@
+name: Learning Contracts Quality
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: learning-contracts-quality-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Validate documentation and schemas
+        shell: python3 {0}
+        run: |
+          import json
+          from pathlib import Path
+
+          required = [
+              Path("README.md"),
+              Path("AGENTS.md"),
+              Path("CLAUDE.md"),
+              Path("CHANGELOG.md"),
+              Path("docs/ARCHITECTURE.md"),
+              Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
+              Path("schemas/learning-event.schema.json"),
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              raise SystemExit(f"missing required bootstrap files: {missing}")
+
+          for path in Path(".").rglob("*.json"):
+              with path.open(encoding="utf-8") as handle:
+                  json.load(handle)
+
+          schema = json.loads(Path("schemas/learning-event.schema.json").read_text(encoding="utf-8"))
+          if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+              raise SystemExit("learning event schema must use JSON Schema Draft 2020-12")
+          if not schema.get("$id"):
+              raise SystemExit("learning event schema must declare a stable $id")
+
+          forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
+          for path in required:
+              text = path.read_text(encoding="utf-8")
+              for marker in forbidden:
+                  if marker in text:
+                      raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
+
+          print("learning interoperability bootstrap contract validation passed")
