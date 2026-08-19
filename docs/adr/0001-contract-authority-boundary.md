@@ -2,7 +2,10 @@
 
 ## Status
 
-Proposed
+Accepted
+
+Approved by: ContextualWisdomLab repository owner  
+Approval date: 2026-08-19
 
 ## Decision
 
