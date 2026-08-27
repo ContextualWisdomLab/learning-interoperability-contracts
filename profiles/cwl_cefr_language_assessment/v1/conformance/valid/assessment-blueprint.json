@@ -1,0 +1,32 @@
+{
+  "contract_version": "cwl_cefr_language_assessment/assessment_blueprint/v1",
+  "blueprint_reference": "cefr_en_placement_a1_b2_blueprint_v1",
+  "framework_version_reference": "coe_cefr_companion_volume_2020",
+  "language_reference_level_description_reference": "english_profile_reference_revision_opaque",
+  "descriptor_source_policy_code": "reference_only_no_descriptor_copy",
+  "target_language": "en",
+  "assessment_purpose_code": "placement",
+  "decision_stakes_code": "low",
+  "reporting_scope_code": "profile_only",
+  "supported_level_codes": ["a1", "a2", "b1", "b2"],
+  "required_domain_codes": [
+    "reading_reception",
+    "listening_reception",
+    "written_production",
+    "spoken_production"
+  ],
+  "optional_domain_codes": ["spoken_interaction", "mediating_text"],
+  "instrument_release_reference": "instrument_release_en_placement_v1",
+  "scoring_profile_reference": "scoring_profile_en_placement_v1",
+  "cut_score_revision_reference": "cut_score_revision_en_placement_v1",
+  "validation_evidence_references": [
+    "content_validation_study_en_v1",
+    "pilot_recovery_study_en_v1",
+    "rater_calibration_study_en_v1"
+  ],
+  "published_at": "2026-08-27T10:00:00Z",
+  "limitations": [
+    "No certification use.",
+    "No mediation or interaction claim unless separately measured."
+  ]
+}
