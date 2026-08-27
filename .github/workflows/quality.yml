@@ -80,5 +80,7 @@ jobs:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
 
           print("learning interoperability bootstrap contract validation passed")
+      - name: Run CEFR schema and blueprint authority regressions
+        run: python3 -m unittest -v tests/test_validate_cefr_profile.py
       - name: Validate CEFR language-assessment profile
         run: python3 scripts/validate_cefr_profile.py
