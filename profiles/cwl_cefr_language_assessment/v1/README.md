@@ -11,7 +11,7 @@ The contract lets Learning Content Studio, Psychometrics Commons, fast-mlsirm, L
 | Artifact | Authority |
 |---|---|
 | CEFR framework, descriptors, official translations | Council of Europe or licensed source |
-| Language-specific Reference Level Description | Its published authority |
+| Target-language Reference Level Description/profile source and revision | Its published authority; a dated registry snapshot is allowed only when no edition identifier exists |
 | Task, prompt, media, rubric, rights | Learning Content Studio or assessment-content owner |
 | Instrument publication, session, response, result snapshot | Psychometrics Commons |
 | Psychometric estimation, rater/task/facet calibration, DIF, linking and uncertainty | fast-mlsirm |
@@ -20,16 +20,25 @@ The contract lets Learning Content Studio, Psychometrics Commons, fast-mlsirm, L
 
 ## Claims
 
-- `experimental`: research-only evidence.
-- `cefr_aligned`: the blueprint references CEFR constructs, but no empirical linking claim is made.
-- `cefr_linked`: exact standard-setting and empirical linking-validation artifacts are pinned.
-- `certification_decision`: a governed high-stakes decision; the shared contract does not itself establish certification authority.
+- `experimental`: research-only evidence; no operational CEFR interpretation claim.
+- `cefr_aligned`: the blueprint references CEFR constructs and an exact target-language profile source/revision, but no empirical examination-linking claim is made.
+- `cefr_linked`: exact standard-setting and empirical linking/classification-validation artifacts are pinned.
+- `certification_decision`: the result is already linked and also pins the exact governed certification authority and certification policy. The shared contract does not create that authority.
 
 The Council of Europe does not verify or certify an examination provider's CEFR link. The Council of Europe logo or European emblem must not be used to imply endorsement.
 
+## Overall reporting
+
+A result cannot authorize its own overall level. The executable validator resolves the immutable assessment blueprint and accepts a reported overall result only when:
+
+- the blueprint declares `overall_and_profile`;
+- every blueprint-required domain has status `measured`;
+- the result's `reporting_policy_reference` exactly equals the blueprint policy;
+- all structural and probability/credible-set checks pass.
+
 ## Rights and data minimization
 
-Official descriptor prose, translations, authored task content, raw responses, audio, model output and PII are prohibited in this shared profile. Contracts carry immutable opaque references, digests, status, uncertainty and evidence identities only.
+Official descriptor prose, translations, authored task content, raw responses, audio, model output and PII are prohibited in this shared profile. Contracts carry immutable opaque references, bounded domain probability/uncertainty summaries, digests, status, limitations and evidence identities only. Item/person/rater parameter arrays, raw scores, likelihood traces and response-level calculations remain outside the contract.
 
 ## Files
 
@@ -39,5 +48,8 @@ Official descriptor prose, translations, authored task content, raw responses, a
 - `schemas/cefr-result-snapshot.schema.json`
 - `conformance/valid/`
 - `conformance/invalid/`
+- `scripts/validate_cefr_profile.py`
+- `tests/test_validate_cefr_profile.py`
+- `requirements-contracts-ci-hashes.txt`
 
-The executable fixture gate lives in `.github/workflows/quality.yml` and is intentionally standard-library-only.
+The executable gate lives in `.github/workflows/quality.yml`. It installs a minimal hash-locked Draft 2020-12 validator set, resolves schema references offline, validates every fixture structurally, then applies semantic and cross-artifact authority checks.
