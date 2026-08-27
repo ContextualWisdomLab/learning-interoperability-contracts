@@ -15,7 +15,14 @@ Adoption status and conformance evidence are intentionally separate. `Adopt` rec
 | CASE Service | 1.1 Final | https://standards.1edtech.org/case/ | Competency and learning-outcome interchange | Adopt | Not evidenced |
 | Open Badges | 3.0 | https://www.1edtech.org/standards/open-badges | Portable achievement credential | Adopt | Not evidenced |
 | Comprehensive Learner Record | 2.0 | https://www.1edtech.org/standards/clr | Portable learner achievement record | Adopt | Not evidenced |
+| CEFR Companion Volume | 2020 | https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume-and-its-language-versions | Framework, levels, communicative modes, descriptor-reference baseline | Adopt as reference-only profile | Contract fixtures on active PR; no assessment-linking claim |
+| Manual for Language Test Development and Examining | Revised 2026 edition | https://www.coe.int/en/web/education/-/manual-for-language-test-development-and-examining-1 | CEFR-related language-test development baseline | Adopt for product/scientific traceability | Documentation only |
+| Manual for Relating Examinations to the CEFR | Current published manual and supplements | https://www.coe.int/en/web/common-european-framework-reference-languages/relating-examinations-to-the-cefr | Standard-setting, empirical linking, transparent reporting and continuing validation | Adopt for claim gate | No linking study evidenced |
+| CEFR Reference Level Descriptions | Language-specific published revisions | https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-reference-level-descriptions-language-by-language-components-and-forerunners | Target-language content specification reference | Adopt by target-language profile | No RLD content copied; authority reference required |
+| Standards for Educational and Psychological Testing | 2014 | https://www.testingstandards.net/ | Intended interpretation/use, validity, reliability/precision, fairness and reporting | Adopt for assessment governance | Downstream product evidence required |
 | WCAG | 2.2, W3C Recommendation 2024-12-12 | https://www.w3.org/TR/WCAG22/ | Accessible learning and contract-facing web content | Adopt | Not evidenced |
 | ATAG | 2.0, W3C Recommendation 2015-09-24 | https://www.w3.org/TR/ATAG20/ | Accessible authoring-tool contract | Adopt | Not evidenced |
+
+The Council of Europe does not verify or validate an examination provider's CEFR link. This repository must not use the Council of Europe logo or the European emblem to imply certification or endorsement.
 
 Every implementation PR that claims conformance must link the precise standard revision, normative requirement, implementation location, and executable evidence. Certification claims require the applicable certification process and may not be inferred from implementation alone.
