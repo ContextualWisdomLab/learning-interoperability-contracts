@@ -12,11 +12,11 @@ Create the smallest shared contract that allows CWL products to exchange a right
 ## Architecture
 
 ```text
-Council of Europe / RLD authority
-        │ immutable references
+Council of Europe / target-language profile authority
+        │ immutable references + fixed revision/snapshot
         ▼
 Learning Interoperability Contracts
-        │ schemas + fixtures
+        │ Draft 2020-12 schemas + semantic fixtures
         ├────────► Learning Content Studio task metadata
         ├────────► Psychometrics Commons blueprint/result snapshot
         ├────────► fast-mlsirm scoring-profile input/output contract
@@ -34,7 +34,7 @@ Typed CEFR levels, communicative modes, activity domains, language tags, exact r
 
 ### Assessment blueprint
 
-Pins intended purpose, stakes, target language, RLD, supported levels, required domains, instrument release, scoring profile, cut-score revision, standard-setting evidence and validation evidence.
+Pins intended purpose, stakes, target language, exact target-language RLD/profile authority and immutable revision/snapshot, supported levels, required domains, instrument release, scoring profile, cut-score revision, overall-reporting authority, standard-setting evidence and validation evidence.
 
 ### Task specification
 
@@ -42,23 +42,29 @@ Pins descriptor identities, target levels, mode/domain, response mode, task rele
 
 ### Result snapshot
 
-Carries immutable domain-level statuses, level probabilities, credible level sets, standard errors, descriptor coverage, overall-reporting status, claim status and evidence references. It does not carry raw responses or psychometric parameters.
+Carries immutable domain-level statuses, level probabilities, credible level sets, standard errors, descriptor coverage, overall-reporting status, claim status and evidence references. It does not carry raw responses, raw scores, item/person/rater parameter arrays, likelihood traces or other scoring-engine internals.
+
+A result snapshot does not authorize its own overall result. The validator resolves `assessment_blueprint_reference`, verifies source-version equality for instrument/scoring/cut-score/language fields, requires every blueprint domain to be measured, and requires the exact blueprint `overall_reporting_policy_reference` before accepting an overall result.
 
 ## Error handling
 
 Contracts fail closed when:
 
+- Draft 2020-12 rejects a required field, type, enum, closed-property or conditional rule;
 - descriptor/task/response payload fields appear;
+- a target-language profile uses a mutable revision alias;
 - high-stakes or certification blueprints omit standard-setting evidence;
 - measured domains omit probability/uncertainty/coverage evidence;
 - probability mass is not one;
 - duplicate domain identities appear;
-- an overall result is reported with incomplete required domains;
-- `cefr_linked` or certification claims omit standard-setting or empirical linking validation.
+- a result references an unknown or incompatible blueprint;
+- an overall result is reported without blueprint authorization, exact policy equality or complete required domains;
+- `cefr_linked` claims omit standard-setting or empirical linking validation;
+- certification decisions omit an exact certification authority or policy.
 
 ## Testing
 
-The quality workflow parses all JSON, validates exact schema metadata, executes valid and negative fixtures, checks probability mass/domain uniqueness, and scans for forbidden payload fields using the Python standard library only. This is the executable first contract slice; full generic JSON Schema conformance and generated SDK tests are a later release slice.
+The quality workflow installs a minimal hash-locked validator set, checks each committed schema against the Draft 2020-12 metaschema, validates every positive and negative fixture through the correct schema with offline `$ref` resolution, then applies semantic gates for probability mass, unique domains, immutable profile revisions and blueprint authority. Standard-library `unittest` regressions lock the structural-schema and cross-artifact authorization failures. Generated SDK tests remain a later release slice.
 
 ## Scope exclusions
 
