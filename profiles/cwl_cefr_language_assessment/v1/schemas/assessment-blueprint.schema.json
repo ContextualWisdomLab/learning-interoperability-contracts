@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/profiles/cwl_cefr_language_assessment/v1/schemas/assessment-blueprint.schema.json",
+  "x-cwl-schema-version": "1.0.0",
+  "title": "CWL CEFR Language Assessment Blueprint v1",
+  "description": "A rights-safe, version-pinned assessment blueprint. It references CEFR/RLD/scientific artifacts and never embeds official descriptor prose.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "blueprint_reference",
+    "framework_version_reference",
+    "language_reference_level_description_reference",
+    "descriptor_source_policy_code",
+    "target_language",
+    "assessment_purpose_code",
+    "decision_stakes_code",
+    "reporting_scope_code",
+    "supported_level_codes",
+    "required_domain_codes",
+    "instrument_release_reference",
+    "scoring_profile_reference",
+    "cut_score_revision_reference",
+    "validation_evidence_references",
+    "published_at"
+  ],
+  "properties": {
+    "contract_version": {"const": "cwl_cefr_language_assessment/assessment_blueprint/v1"},
+    "blueprint_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "framework_version_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "language_reference_level_description_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "descriptor_source_policy_code": {"const": "reference_only_no_descriptor_copy"},
+    "target_language": {"$ref": "cefr-common.schema.json#/$defs/language_tag"},
+    "assessment_purpose_code": {
+      "type": "string",
+      "enum": ["placement", "diagnostic", "progress_monitoring", "certification", "research"]
+    },
+    "decision_stakes_code": {"type": "string", "enum": ["low", "moderate", "high"]},
+    "reporting_scope_code": {"type": "string", "enum": ["profile_only", "overall_and_profile"]},
+    "supported_level_codes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"}
+    },
+    "required_domain_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"$ref": "cefr-common.schema.json#/$defs/activity_domain_code"}
+    },
+    "optional_domain_codes": {
+      "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"$ref": "cefr-common.schema.json#/$defs/activity_domain_code"}
+    },
+    "instrument_release_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "scoring_profile_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "cut_score_revision_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "overall_reporting_policy_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "standard_setting_study_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "validation_evidence_references": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+    },
+    "published_at": {"$ref": "cefr-common.schema.json#/$defs/date_time"},
+    "limitations": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 3, "maxLength": 256}
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"reporting_scope_code": {"const": "overall_and_profile"}},
+        "required": ["reporting_scope_code"]
+      },
+      "then": {"required": ["overall_reporting_policy_reference"]}
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {"decision_stakes_code": {"const": "high"}},
+            "required": ["decision_stakes_code"]
+          },
+          {
+            "properties": {"assessment_purpose_code": {"const": "certification"}},
+            "required": ["assessment_purpose_code"]
+          }
+        ]
+      },
+      "then": {"required": ["standard_setting_study_reference"]}
+    }
+  ]
+}
