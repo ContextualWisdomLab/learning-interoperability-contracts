@@ -22,6 +22,14 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+      - name: Set up pinned Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install hash-locked contract validator
+        run: >-
+          python -m pip install --disable-pip-version-check --only-binary=:all:
+          --require-hashes -r requirements-contracts-ci-hashes.txt
       - name: Validate documentation and schemas
         shell: python3 {0}
         run: |
@@ -39,6 +47,7 @@ jobs:
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
+              Path("requirements-contracts-ci-hashes.txt"),
               schema_path,
           ]
           missing = [str(path) for path in required if not path.is_file()]
@@ -81,6 +90,10 @@ jobs:
 
           print("learning interoperability bootstrap contract validation passed")
       - name: Run CEFR schema and blueprint authority regressions
-        run: python3 -m unittest -v tests/test_validate_cefr_profile.py
+        run: python -m unittest -v tests/test_validate_cefr_profile.py
       - name: Validate CEFR language-assessment profile
-        run: python3 scripts/validate_cefr_profile.py
+        run: python scripts/validate_cefr_profile.py
+      - name: Compile validator and tests
+        run: python -m compileall -q scripts tests
+      - name: Verify clean diff
+        run: git diff --check
