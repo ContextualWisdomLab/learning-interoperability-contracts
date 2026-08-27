@@ -14,6 +14,8 @@ Authority boundaries:
 - TEPP: longitudinal, temporal, multilevel, and multiple-membership language-development analysis.
 - contextual-orchestrator: bounded AI-rater orchestration; its observations are evidence, not score authority.
 
-The CEFR profile stores immutable references and result-envelope evidence only. It never stores official descriptor prose, authored task content, raw responses, audio, provider payloads, PII, or numerical psychometric payloads.
+The CEFR profile stores immutable references and bounded result-envelope summaries only. Allowed summaries include domain `level_probabilities`, `credible_level_set`, `standard_error`, measurement status, descriptor-coverage references, claim status, limitations, and evidence identities. The profile never stores official descriptor prose, authored task content, raw responses, audio, provider payloads, PII, item/person/rater parameter arrays, likelihood traces, raw scores, response-level calculations, or other scoring-engine internals.
+
+A reported overall result is not self-authorizing. The executable validator resolves the exact immutable assessment blueprint and accepts an overall result only when that blueprint permits overall reporting, every required domain is measured, and the result cites the blueprint's exact reporting policy.
 
 Consumers integrate through versioned contracts; cross-repository database access is not part of the architecture.
