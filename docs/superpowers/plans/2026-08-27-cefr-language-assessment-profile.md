@@ -99,6 +99,7 @@
 ### Task 6: Executable fixture gate
 
 **Files:**
+- Create: `scripts/validate_cefr_profile.py`
 - Modify: `.github/workflows/quality.yml`
 
 **Interfaces:**
