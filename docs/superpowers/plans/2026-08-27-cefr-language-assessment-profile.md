@@ -6,7 +6,7 @@
 
 **Architecture:** The contract repository carries metadata references and conformance evidence only. Learning Content Studio owns authored content, Psychometrics Commons owns sessions/results, fast-mlsirm owns numerical psychometrics, LMS owns placement/completion actions, and TEPP owns longitudinal analysis.
 
-**Tech Stack:** JSON Schema Draft 2020-12, JSON fixtures, Markdown ADR/doctoring, GitHub Actions with Python 3 standard library.
+**Tech Stack:** JSON Schema Draft 2020-12, hash-locked `jsonschema`/`referencing`, standard-library `unittest`, JSON fixtures, Markdown ADR/doctoring, and GitHub Actions.
 
 **Spec:** `docs/superpowers/specs/2026-08-27-cefr-language-assessment-profile-design.md`
 
@@ -26,9 +26,6 @@
 **Files:**
 - Create: `profiles/cwl_cefr_language_assessment/v1/schemas/cefr-common.schema.json`
 
-**Interfaces:**
-- Produces: CEFR level, activity-domain, communication-mode, language-tag, exact-reference, digest and timestamp definitions.
-
 - [x] Define Pre-A1, A1/A2/B1/B2/C1/C2 and A2+/B1+/B2+ codes.
 - [x] Define reception, production, interaction and mediation.
 - [x] Define activity domains without descriptor prose.
@@ -40,11 +37,8 @@
 - Create: `profiles/cwl_cefr_language_assessment/v1/schemas/assessment-blueprint.schema.json`
 - Create: `profiles/cwl_cefr_language_assessment/v1/schemas/task-specification.schema.json`
 
-**Interfaces:**
-- Consumes: common definitions from Task 1.
-- Produces: immutable assessment and task metadata boundaries.
-
-- [x] Require target-language RLD, instrument, scoring, cut-score and validation references.
+- [x] Require exact target-language profile/RLD authority and immutable revision/snapshot.
+- [x] Require instrument, scoring, cut-score and validation references.
 - [x] Require standard-setting evidence for high-stakes/certification blueprints.
 - [x] Require mode-specific task evidence and rubric references for constructed responses.
 - [x] Prohibit copied descriptor/task payload fields by closed schemas.
@@ -54,14 +48,11 @@
 **Files:**
 - Create: `profiles/cwl_cefr_language_assessment/v1/schemas/cefr-result-snapshot.schema.json`
 
-**Interfaces:**
-- Consumes: common definitions from Task 1.
-- Produces: `cwl_cefr_language_assessment/result_snapshot/v1`.
-
 - [x] Require domain probabilities, uncertainty and descriptor coverage for measured domains.
 - [x] Require explicit non-measurement states instead of invented scores.
-- [x] Gate overall reporting on complete required domains and a reporting policy.
-- [x] Gate `cefr_linked` and certification claims on standard-setting and empirical validation references.
+- [x] Require standard-setting and empirical validation for `cefr_linked`.
+- [x] Require linked evidence plus exact certification authority/policy for `certification_decision`.
+- [x] Document the mandatory cross-artifact blueprint authority check.
 
 ### Task 4: Positive and negative fixtures
 
@@ -69,13 +60,10 @@
 - Create: `profiles/cwl_cefr_language_assessment/v1/conformance/valid/*.json`
 - Create: `profiles/cwl_cefr_language_assessment/v1/conformance/invalid/*.json`
 
-**Interfaces:**
-- Produces: executable examples for downstream contract tests.
-
-- [x] Add an English A1–B2 placement blueprint.
+- [x] Add separate profile-only and overall-authorized English A1–B2 blueprints.
 - [x] Add a reference-only reading-task specification.
 - [x] Add profile-only and linked-overall result examples.
-- [x] Add failures for missing standard setting, copied descriptor text, incomplete overall reporting and non-unit probability mass.
+- [x] Add failures for missing standard setting, copied descriptor text, incomplete overall reporting, profile-only overall reporting and non-unit probability mass.
 
 ### Task 5: Governance and traceability
 
@@ -88,28 +76,27 @@
 - Modify: `docs/ARCHITECTURE.md`
 - Modify: `docs/doctoring/STANDARD_TRACEABILITY.md`
 
-**Interfaces:**
-- Produces: reviewer-readable authority, rights, claim and research boundaries.
-
 - [x] Record the 2020 Companion Volume and 2026 revised test-development manual.
 - [x] State that the Council of Europe does not validate provider linking claims.
-- [x] Separate CEFR alignment, linking and certification-decision status.
+- [x] Separate CEFR alignment, linking and certification-decision evidence gates.
+- [x] Replace mutable Manual/RLD labels with exact editions, versions, ISBNs or dated registry snapshots.
 - [x] Record downstream repository ownership and next actions.
 
 ### Task 6: Executable fixture gate
 
 **Files:**
+- Create: `requirements-contracts-ci-hashes.txt`
 - Create: `scripts/validate_cefr_profile.py`
+- Create: `tests/test_validate_cefr_profile.py`
 - Modify: `.github/workflows/quality.yml`
 
-**Interfaces:**
-- Consumes: all Task 1–4 schemas and fixtures.
-- Produces: `Learning Contracts Quality` exact-head evidence.
-
-- [x] Parse every JSON file.
-- [x] Verify schema metadata and published paths.
-- [x] Accept all valid fixtures.
-- [x] Reject each negative fixture for its intended reason.
+- [x] Reproduce missing-schema and blueprint-authority defects as RED tests.
+- [x] Validate each document against its committed Draft 2020-12 schema before semantic checks.
+- [x] Validate every schema against the Draft 2020-12 metaschema with offline `$ref` resolution.
+- [x] Resolve immutable blueprints for every result.
+- [x] Require blueprint-authorized reporting scope, all required domains and exact policy equality for overall results.
 - [x] Reject forbidden payload fields, duplicate domains and invalid probability mass.
+- [x] Compile validator/tests and run `git diff --check` in CI.
 - [ ] Obtain terminal hosted checks on the unchanged exact head.
+- [ ] Resolve or answer every valid exact-head review thread.
 - [ ] Obtain qualifying independent review after the parent branch is ready.
