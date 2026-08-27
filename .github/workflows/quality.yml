@@ -2,7 +2,7 @@ name: Learning Contracts Quality
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [develop, main, agent/bootstrap-learning-contracts]
   push:
     branches: [develop, main]
 
@@ -80,3 +80,5 @@ jobs:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
 
           print("learning interoperability bootstrap contract validation passed")
+      - name: Validate CEFR language-assessment profile
+        run: python3 scripts/validate_cefr_profile.py

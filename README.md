@@ -6,9 +6,13 @@ Shared, versioned interoperability contracts for the CWL Learning Platform.
 
 This repository contains schemas, profiles, generated-client contracts, and conformance fixtures shared by the Learning Management Platform, Learning Content Studio, Learning Record Store, Psychometrics Commons, and other CWL consumers.
 
-Initial standards portfolio: xAPI 2.0, cmi5 Quartz compatibility, LTI 1.3, QTI 3, CASE 1.1, Open Badges 3.0, CLR 2.0, and accessibility-related contract metadata.
+Initial standards portfolio: xAPI 2.0, cmi5 Quartz compatibility, LTI 1.3, QTI 3, CASE 1.1, Open Badges 3.0, CLR 2.0, CEFR language-assessment metadata, and accessibility-related contract metadata.
 
 It contains no product runtime state and no application database.
+
+## Profiles
+
+- `profiles/cwl_cefr_language_assessment/v1` defines a rights-safe CEFR assessment blueprint, task metadata, immutable domain-result snapshot, and executable fixtures. It stores references rather than official descriptor prose, task content, responses, media, or numerical scoring payloads.
 
 ## Branching
 
