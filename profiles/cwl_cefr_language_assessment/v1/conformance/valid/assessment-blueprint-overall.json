@@ -2,7 +2,8 @@
   "contract_version": "cwl_cefr_language_assessment/assessment_blueprint/v1",
   "blueprint_reference": "cefr_en_placement_a1_b2_overall_blueprint_v1",
   "framework_version_reference": "coe_cefr_companion_volume_2020",
-  "language_reference_level_description_reference": "english_profile_reference_revision_opaque",
+  "language_reference_level_description_reference": "coe_rld_registry_english_profile",
+  "language_reference_level_description_revision": "english_profile_registry_snapshot_2026_08_27",
   "descriptor_source_policy_code": "reference_only_no_descriptor_copy",
   "target_language": "en",
   "assessment_purpose_code": "placement",
@@ -28,6 +29,7 @@
   "published_at": "2026-08-27T10:00:00Z",
   "limitations": [
     "No certification use.",
+    "English Profile is pinned as a dated registry snapshot because the public registry exposes no single immutable edition identifier.",
     "No mediation or interaction claim unless separately measured."
   ]
 }
