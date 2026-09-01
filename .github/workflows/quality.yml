@@ -15,7 +15,10 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    # Live exact-head evidence showed ubuntu-latest remaining unassigned with no
+    # executed steps. The explicit Ubuntu 24.04 image is already proven usable
+    # by the sibling Learning Content Studio quality lane.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout exact revision
