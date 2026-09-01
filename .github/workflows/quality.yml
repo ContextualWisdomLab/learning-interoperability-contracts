@@ -84,9 +84,15 @@ jobs:
                   f"schema major version {version_match.group(1)} must match path segment {path_major!r}"
               )
 
-          expected_id = "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/schemas/v1/learning-event.schema.json"
+          # `$id` is a canonical logical identifier, not a mutable branch URL or a
+          # claim that an unreleased schema has already been published. Its semantic
+          # version therefore determines an immutable identity before the first release.
+          expected_id = (
+              "urn:contextualwisdomlab:learning-interoperability-contracts:"
+              f"learning-event:{version}"
+          )
           if schema.get("$id") != expected_id:
-              raise SystemExit("learning event schema $id must match the versioned published path")
+              raise SystemExit("learning event schema $id must match the immutable version-derived identity")
 
           def parse_contract_timestamp(candidate: str) -> datetime:
               normalized = candidate
