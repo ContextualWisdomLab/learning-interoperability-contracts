@@ -5,7 +5,7 @@ Adoption status and implementation/conformance evidence are intentionally separa
 | Standard | Revision | Normative source | Scope | Adoption status | Evidence status |
 |---|---|---|---|---|---|
 | xAPI / ISO/IEC/IEEE 39274-1-1 | xAPI 2.0; ISO/IEC/IEEE 39274-1-1:2025 | https://www.iso.org/standard/91131.html | Canonical learning-experience record contract | Adopt | Not evidenced (adoption only) |
-| cmi5 Quartz | Quartz, 1st Edition (2016), xAPI 1.0.3 compatibility | https://github.com/AICC/CMI-5_Spec_Current/blob/quartz/cmi5_spec.md | Version-pinned LMS launch and package compatibility | Adopt as compatibility profile | Not evidenced (adoption only) |
+| cmi5 Quartz | Quartz, 1st Edition (2016), xAPI 1.0.3 compatibility | https://github.com/AICC/CMI-5_Spec_Current/blob/984a9b8/cmi5_spec.md | Version-pinned LMS launch and package compatibility | Adopt as compatibility profile | Not evidenced (adoption only) |
 | LTI Core | 1.3.0 Final | https://standards.1edtech.org/lti/specifications/core/lti-spec1p3p1 | External learning-tool launch and security contract | Adopt | Not evidenced (adoption only) |
 | LTI Assignment and Grade Services | 2.0 Final | https://standards.1edtech.org/lti/specifications/services/assignments_grades/assignment-grade-services-spec | Gradebook/result service interoperability | Adopt | Not evidenced (adoption only) |
 | LTI Names and Role Provisioning Services | 2.0 Final | https://standards.1edtech.org/lti/specifications/services/names_roles/names-role-provisioning-spec | Context-scoped membership and role provisioning | Adopt | Not evidenced (adoption only) |
