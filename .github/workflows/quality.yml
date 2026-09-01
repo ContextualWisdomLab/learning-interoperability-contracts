@@ -122,8 +122,8 @@ jobs:
           )
 
           format_checker = FormatChecker()
-          if not format_checker.checkers.get("date-time"):
-              raise SystemExit("date-time format checker is not registered")
+          if format_checker.conforms("2026-02-29T14:00:00Z", "date-time"):
+              raise SystemExit("date-time format checker is inactive or accepts an impossible calendar date")
 
           for field_name in ("occurred_at", "recorded_at"):
               field = schema["properties"][field_name]
