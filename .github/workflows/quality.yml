@@ -177,3 +177,5 @@ jobs:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
 
           print("learning interoperability bootstrap contract validation passed")
+      - name: Validate xAPI protocol binding fixtures
+        run: python3 tests/test_xapi_protocol_binding.py
