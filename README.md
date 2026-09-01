@@ -1,5 +1,7 @@
 # Learning Interoperability Contracts
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ContextualWisdomLab/learning-interoperability-contracts)
+
 Shared, versioned interoperability contracts for the CWL Learning Platform.
 
 ## Scope
