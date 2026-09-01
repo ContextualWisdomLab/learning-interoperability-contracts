@@ -21,7 +21,10 @@ jobs:
       - name: Checkout exact revision
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Install pinned schema validator
+        run: python3 -m pip install --disable-pip-version-check --no-input 'jsonschema==4.26.0'
       - name: Validate documentation and schemas
         shell: python3 {0}
         run: |
@@ -29,6 +32,9 @@ jobs:
           import re
           from datetime import datetime
           from pathlib import Path
+
+          from jsonschema import Draft202012Validator
+          from jsonschema.exceptions import SchemaError
 
           schema_path = Path("schemas/v1/learning-event.schema.json")
           required = [
@@ -45,32 +51,94 @@ jobs:
           if missing:
               raise SystemExit(f"missing required bootstrap files: {missing}")
 
-          for path in Path(".").rglob("*.json"):
+          schemas = {}
+          for path in Path("schemas").rglob("*.json"):
               with path.open(encoding="utf-8") as handle:
-                  json.load(handle)
+                  value = json.load(handle)
+              try:
+                  Draft202012Validator.check_schema(value)
+              except SchemaError as exc:
+                  raise SystemExit(f"invalid Draft 2020-12 schema in {path}: {exc.message}") from exc
+              schemas[path] = value
 
-          schema = json.loads(schema_path.read_text(encoding="utf-8"))
+          # Prove the validator is checking schema semantics rather than JSON syntax alone.
+          try:
+              Draft202012Validator.check_schema({"$schema": "https://json-schema.org/draft/2020-12/schema", "type": 7})
+          except SchemaError:
+              pass
+          else:
+              raise SystemExit("schema validator accepted an invalid type keyword value")
+
+          schema = schemas[schema_path]
           if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
               raise SystemExit("learning event schema must use JSON Schema Draft 2020-12")
-          if schema.get("x-cwl-schema-version") != "1.0.0":
-              raise SystemExit("learning event schema must declare schema version 1.0.0")
+
+          version = schema.get("x-cwl-schema-version", "")
+          version_match = re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version)
+          if not version_match:
+              raise SystemExit("learning event schema must declare a canonical semantic version")
+          path_major = schema_path.parent.name
+          if path_major != f"v{version_match.group(1)}":
+              raise SystemExit(
+                  f"schema major version {version_match.group(1)} must match path segment {path_major!r}"
+              )
+
           expected_id = "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/schemas/v1/learning-event.schema.json"
           if schema.get("$id") != expected_id:
               raise SystemExit("learning event schema $id must match the versioned published path")
+
+          def parse_contract_timestamp(candidate: str) -> datetime:
+              normalized = candidate
+              if len(normalized) > 10 and normalized[10] == "t":
+                  normalized = normalized[:10] + "T" + normalized[11:]
+              if normalized.endswith(("Z", "z")):
+                  normalized = normalized[:-1] + "+00:00"
+              return datetime.fromisoformat(normalized)
+
+          valid_timestamps = (
+              "2026-08-19T14:00:00Z",
+              "2026-08-19t14:00:00z",
+              "2024-02-29T23:59:59+14:00",
+              "2026-01-01T00:00:00-05:30",
+              "2026-01-01T00:00:00.123456Z",
+          )
+          invalid_timestamps = (
+              "2026-08-19",
+              "not-a-date",
+              "2026-08-19T14:00:00",
+              "2026-02-29T14:00:00Z",
+              "2026-13-01T14:00:00Z",
+              "2026-04-31T14:00:00Z",
+              "2026-01-01T24:00:00Z",
+              "2026-01-01T14:60:00Z",
+              "2026-01-01T14:00:60Z",
+              "2026-01-01T14:00:00+24:00",
+              "2026-01-01T14:00:00+14:60",
+          )
 
           for field_name in ("occurred_at", "recorded_at"):
               field = schema["properties"][field_name]
               if field.get("format") != "date-time" or not field.get("pattern"):
                   raise SystemExit(f"{field_name} must require date-time format and a syntax pattern")
               pattern = re.compile(field["pattern"])
-              valid = "2026-08-19T14:00:00Z"
-              invalid = ("2026-08-19", "not-a-date", "2026-08-19T14:00:00")
-              if not pattern.fullmatch(valid):
-                  raise SystemExit(f"{field_name} pattern rejects a valid RFC 3339 timestamp")
-              datetime.fromisoformat(valid.replace("Z", "+00:00"))
-              for candidate in invalid:
-                  if pattern.fullmatch(candidate):
-                      raise SystemExit(f"{field_name} pattern accepts invalid timestamp syntax: {candidate}")
+
+              for candidate in valid_timestamps:
+                  if not pattern.fullmatch(candidate):
+                      raise SystemExit(f"{field_name} pattern rejects valid contract timestamp: {candidate}")
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError as exc:
+                      raise SystemExit(f"{field_name} parser rejects valid timestamp: {candidate}") from exc
+
+              for candidate in invalid_timestamps:
+                  pattern_accepts = bool(pattern.fullmatch(candidate))
+                  parser_accepts = True
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError:
+                      parser_accepts = False
+                  if pattern_accepts and parser_accepts:
+                      raise SystemExit(f"{field_name} accepts invalid timestamp: {candidate}")
 
           forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
           for path in required:
