@@ -1,8 +1,7 @@
 name: Learning Contracts Quality
 
 on:
-  pull_request:
-    branches: [develop, main]
+  pull_request: {}
   push:
     branches: [develop, main]
 
