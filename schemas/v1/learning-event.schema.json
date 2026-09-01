@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/schemas/v1/learning-event.schema.json",
+  "$id": "urn:contextualwisdomlab:learning-interoperability-contracts:learning-event:1.0.0",
   "x-cwl-schema-version": "1.0.0",
   "title": "CWL Learning Domain Event Envelope",
   "type": "object",
