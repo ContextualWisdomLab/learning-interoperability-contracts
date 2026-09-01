@@ -24,7 +24,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Install pinned schema validator
-        run: python3 -m pip install --disable-pip-version-check --no-input 'jsonschema==4.26.0'
+        run: python3 -m pip install --disable-pip-version-check --no-input 'jsonschema==4.26.0' 'rfc3339-validator==0.1.4'
       - name: Validate documentation and schemas
         shell: python3 {0}
         run: |
@@ -122,6 +122,9 @@ jobs:
           )
 
           format_checker = FormatChecker()
+          if not format_checker.checkers.get("date-time"):
+              raise SystemExit("date-time format checker is not registered")
+
           for field_name in ("occurred_at", "recorded_at"):
               field = schema["properties"][field_name]
               if field.get("format") != "date-time" or not field.get("pattern"):
