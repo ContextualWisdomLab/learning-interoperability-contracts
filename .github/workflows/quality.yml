@@ -44,6 +44,8 @@ jobs:
               Path("AGENTS.md"),
               Path("CLAUDE.md"),
               Path("CHANGELOG.md"),
+              Path("docs/PRD.md"),
+              Path("docs/TRD.md"),
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
