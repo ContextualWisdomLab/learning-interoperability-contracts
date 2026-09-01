@@ -66,7 +66,6 @@ jobs:
                   raise SystemExit(f"invalid Draft 2020-12 schema in {path}: {exc.message}") from exc
               schemas[path] = value
 
-          # Prove the validator is checking schema semantics rather than JSON syntax alone.
           try:
               Draft202012Validator.check_schema({"$schema": "https://json-schema.org/draft/2020-12/schema", "type": 7})
           except SchemaError:
@@ -88,9 +87,6 @@ jobs:
                   f"schema major version {version_match.group(1)} must match path segment {path_major!r}"
               )
 
-          # `$id` is a canonical logical identifier, not a mutable branch URL or a
-          # claim that an unreleased schema has already been published. Its semantic
-          # version therefore determines an immutable identity before the first release.
           expected_id = (
               "urn:contextualwisdomlab:learning-interoperability-contracts:"
               f"learning-event:{version}"
@@ -139,12 +135,7 @@ jobs:
               field = schema["properties"][field_name]
               if field.get("format") != "date-time" or not field.get("pattern"):
                   raise SystemExit(f"{field_name} must require date-time format and a syntax pattern")
-
-              # Draft 2020-12's default metaschema treats format as annotation. The
-              # contract gate therefore opts into executable format checking and
-              # combines it with the committed lexical pattern.
               field_validator = Draft202012Validator(field, format_checker=format_checker)
-
               for candidate in valid_timestamps:
                   errors = list(field_validator.iter_errors(candidate))
                   if errors:
@@ -156,12 +147,9 @@ jobs:
                       parse_contract_timestamp(candidate)
                   except ValueError as exc:
                       raise SystemExit(f"{field_name} parser rejects valid timestamp: {candidate}") from exc
-
               for candidate in invalid_timestamps:
-                  errors = list(field_validator.iter_errors(candidate))
-                  if not errors:
+                  if not list(field_validator.iter_errors(candidate)):
                       raise SystemExit(f"{field_name} schema accepts invalid timestamp: {candidate}")
-
               for candidate in invalid_calendar_timestamps:
                   try:
                       parse_contract_timestamp(candidate)
@@ -178,3 +166,5 @@ jobs:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
 
           print("learning interoperability bootstrap contract validation passed")
+      - name: Validate xAPI protocol binding fixtures
+        run: python3 tests/test_xapi_protocol_binding.py
