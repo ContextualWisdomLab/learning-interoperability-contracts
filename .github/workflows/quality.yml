@@ -1,0 +1,180 @@
+name: Learning Contracts Quality
+
+on:
+  pull_request: {}
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: learning-contracts-quality-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    # Live exact-head evidence showed ubuntu-latest remaining unassigned with no
+    # executed steps. The explicit Ubuntu 24.04 image is already proven usable
+    # by the sibling Learning Content Studio quality lane.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Install pinned schema validator
+        run: python3 -m pip install --disable-pip-version-check --no-input 'jsonschema==4.26.0' 'rfc3339-validator==0.1.4'
+      - name: Validate documentation and schemas
+        shell: python3 {0}
+        run: |
+          import json
+          import re
+          from datetime import datetime
+          from pathlib import Path
+
+          from jsonschema import Draft202012Validator, FormatChecker
+          from jsonschema.exceptions import SchemaError
+
+          schema_path = Path("schemas/v1/learning-event.schema.json")
+          required = [
+              Path("README.md"),
+              Path("AGENTS.md"),
+              Path("CLAUDE.md"),
+              Path("CHANGELOG.md"),
+              Path("docs/PRD.md"),
+              Path("docs/TRD.md"),
+              Path("docs/ARCHITECTURE.md"),
+              Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
+              Path("docs/product-technical-gap-baseline.md"),
+              schema_path,
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              raise SystemExit(f"missing required bootstrap files: {missing}")
+
+          schemas = {}
+          for path in Path("schemas").rglob("*.json"):
+              with path.open(encoding="utf-8") as handle:
+                  value = json.load(handle)
+              try:
+                  Draft202012Validator.check_schema(value)
+              except SchemaError as exc:
+                  raise SystemExit(f"invalid Draft 2020-12 schema in {path}: {exc.message}") from exc
+              schemas[path] = value
+
+          # Prove the validator is checking schema semantics rather than JSON syntax alone.
+          try:
+              Draft202012Validator.check_schema({"$schema": "https://json-schema.org/draft/2020-12/schema", "type": 7})
+          except SchemaError:
+              pass
+          else:
+              raise SystemExit("schema validator accepted an invalid type keyword value")
+
+          schema = schemas[schema_path]
+          if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+              raise SystemExit("learning event schema must use JSON Schema Draft 2020-12")
+
+          version = schema.get("x-cwl-schema-version", "")
+          version_match = re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version)
+          if not version_match:
+              raise SystemExit("learning event schema must declare a canonical semantic version")
+          path_major = schema_path.parent.name
+          if path_major != f"v{version_match.group(1)}":
+              raise SystemExit(
+                  f"schema major version {version_match.group(1)} must match path segment {path_major!r}"
+              )
+
+          # `$id` is a canonical logical identifier, not a mutable branch URL or a
+          # claim that an unreleased schema has already been published. Its semantic
+          # version therefore determines an immutable identity before the first release.
+          expected_id = (
+              "urn:contextualwisdomlab:learning-interoperability-contracts:"
+              f"learning-event:{version}"
+          )
+          if schema.get("$id") != expected_id:
+              raise SystemExit("learning event schema $id must match the immutable version-derived identity")
+
+          def parse_contract_timestamp(candidate: str) -> datetime:
+              normalized = candidate
+              if len(normalized) > 10 and normalized[10] == "t":
+                  normalized = normalized[:10] + "T" + normalized[11:]
+              if normalized.endswith(("Z", "z")):
+                  normalized = normalized[:-1] + "+00:00"
+              return datetime.fromisoformat(normalized)
+
+          valid_timestamps = (
+              "2026-08-19T14:00:00Z",
+              "2026-08-19t14:00:00z",
+              "2024-02-29T23:59:59+14:00",
+              "2026-01-01T00:00:00-05:30",
+              "2026-01-01T00:00:00.123456Z",
+          )
+          invalid_timestamps = (
+              "2026-08-19",
+              "not-a-date",
+              "2026-08-19T14:00:00",
+              "2026-02-29T14:00:00Z",
+              "2026-13-01T14:00:00Z",
+              "2026-04-31T14:00:00Z",
+              "2026-01-01T24:00:00Z",
+              "2026-01-01T14:60:00Z",
+              "2026-01-01T14:00:60Z",
+              "2026-01-01T14:00:00+24:00",
+              "2026-01-01T14:00:00+14:60",
+          )
+          invalid_calendar_timestamps = (
+              "2026-02-29T14:00:00Z",
+              "2026-04-31T14:00:00Z",
+          )
+
+          format_checker = FormatChecker()
+          if format_checker.conforms("2026-02-29T14:00:00Z", "date-time"):
+              raise SystemExit("date-time format checker is inactive or accepts an impossible calendar date")
+
+          for field_name in ("occurred_at", "recorded_at"):
+              field = schema["properties"][field_name]
+              if field.get("format") != "date-time" or not field.get("pattern"):
+                  raise SystemExit(f"{field_name} must require date-time format and a syntax pattern")
+
+              # Draft 2020-12's default metaschema treats format as annotation. The
+              # contract gate therefore opts into executable format checking and
+              # combines it with the committed lexical pattern.
+              field_validator = Draft202012Validator(field, format_checker=format_checker)
+
+              for candidate in valid_timestamps:
+                  errors = list(field_validator.iter_errors(candidate))
+                  if errors:
+                      raise SystemExit(
+                          f"{field_name} schema rejects valid contract timestamp {candidate}: "
+                          + "; ".join(error.message for error in errors)
+                      )
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError as exc:
+                      raise SystemExit(f"{field_name} parser rejects valid timestamp: {candidate}") from exc
+
+              for candidate in invalid_timestamps:
+                  errors = list(field_validator.iter_errors(candidate))
+                  if not errors:
+                      raise SystemExit(f"{field_name} schema accepts invalid timestamp: {candidate}")
+
+              for candidate in invalid_calendar_timestamps:
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError:
+                      pass
+                  else:
+                      raise SystemExit(f"{field_name} parser accepts impossible calendar date: {candidate}")
+
+          forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
+          for path in required:
+              text = path.read_text(encoding="utf-8")
+              for marker in forbidden:
+                  if marker in text:
+                      raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
+
+          print("learning interoperability bootstrap contract validation passed")
