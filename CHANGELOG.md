@@ -28,3 +28,4 @@
 - Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.
 - Pinned the JSON Schema validator to the package index's available `4.25.1` binary while retaining the complete hash-locked RFC 3339 backend closure.
 - Repository Quality executes the xAPI protocol-binding regression suite on the same exact stacked head.
+- Repository Quality fails closed if the stacked xAPI ADR advances from Proposed before protected integration.
