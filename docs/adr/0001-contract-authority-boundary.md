@@ -2,14 +2,11 @@
 
 ## Status
 
-Accepted
-
-Approved by: ContextualWisdomLab repository owner  
-Approval date: 2026-08-19
+Proposed. This bootstrap branch is review evidence only; the decision is not protected-`develop` truth and has no release authority.
 
 ## Decision
 
-This repository is the single CWL authority for shared learning interoperability schemas, profiles, generated clients, and conformance fixtures. It does not own runtime learner, content, assessment, or learning-record state.
+Propose this repository as the single CWL authority for shared learning interoperability schemas, profiles, generated clients, and conformance fixtures. It does not own runtime learner, content, assessment, or learning-record state.
 
 ## Consequences
 

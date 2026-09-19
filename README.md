@@ -4,7 +4,7 @@
 
 **Versioned, provider-neutral contracts that let ContextualWisdomLab learning products exchange evidence without sharing implementation ownership.**
 
-Learning Interoperability Contracts is the shared contract authority for schemas, profiles, mappings, conformance fixtures, and generated-client contracts across the CWL Learning Platform. It defines what crosses product boundaries; it does not become the source of truth for learner state, authored content, learning records, psychometric computation, billing, or product databases.
+Learning Interoperability Contracts is the proposed shared contract authority for schemas, profiles, mappings, conformance fixtures, and generated-client contracts across the CWL Learning Platform. It defines the intended cross-product boundary; it does not become protected authority or the source of truth for learner state, authored content, learning records, psychometric computation, billing, or product databases before ordinary integration and release.
 
 > **Status:** pre-release bootstrap. An open branch or schema path is not an immutable published contract release.
 

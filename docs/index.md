@@ -4,7 +4,7 @@ title: Learning Interoperability Contracts
 
 # Learning Interoperability Contracts
 
-Learning Interoperability Contracts is the provider-neutral contract authority for shared learning schemas, profiles, mappings, conformance fixtures, and generated-client contracts across the ContextualWisdomLab learning ecosystem.
+Learning Interoperability Contracts is the proposed provider-neutral contract authority for shared learning schemas, profiles, mappings, conformance fixtures, and generated-client contracts across the ContextualWisdomLab learning ecosystem. The proposal remains branch evidence until ordinary protected integration and immutable release.
 
 ## Start here
 

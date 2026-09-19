@@ -2,7 +2,7 @@
 
 ## Product
 
-**Learning Interoperability Contracts** is the provider-neutral contract authority for the ContextualWisdomLab learning ecosystem. It gives product teams and external integrators immutable, versioned definitions for exchanging learning-domain data without sharing product databases or leaking one runtime's internal model into another.
+**Learning Interoperability Contracts** is the proposed provider-neutral contract authority for the ContextualWisdomLab learning ecosystem. Once protected and released, it gives product teams and external integrators immutable, versioned definitions for exchanging learning-domain data without sharing product databases or leaking one runtime's internal model into another.
 
 ## Customer problem
 
@@ -66,7 +66,7 @@ Rust, TypeScript and Python package boundaries may be generated only from releas
 
 ## Current commercialization slice
 
-The bootstrap parent establishes repository authority, a versioned learning-event envelope candidate, Draft 2020-12 validation, a complete synthetic positive/negative envelope fixture manifest, a language-neutral timestamp fixture manifest executed by repository Quality, architecture/ADR/standards evidence, explicit PRD/TRD and exact-head quality gates. Issue #3 / PR #7 adds a separate internal protocol-selection candidate for xAPI 2.0 versus cmi5 Quartz without claiming statement/profile conformance.
+The bootstrap parent proposes repository authority and establishes a versioned learning-event envelope candidate, Draft 2020-12 validation, a complete synthetic positive/negative envelope fixture manifest, a language-neutral timestamp fixture manifest executed by repository Quality, architecture/ADR/standards evidence, explicit PRD/TRD and exact-head quality gates. Issue #3 / PR #7 adds a separate internal protocol-selection candidate for xAPI 2.0 versus cmi5 Quartz without claiming statement/profile conformance.
 
 Neither surface is a released supported contract until the protected integration/release gates below complete.
 
