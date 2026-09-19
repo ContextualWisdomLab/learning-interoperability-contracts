@@ -13,7 +13,7 @@
 - Version-bound learning-event envelope fixtures covering two valid shapes and every current required-field, closed-object, length, semantic-version, timestamp, and data-type rejection invariant.
 - A language-neutral timestamp fixture manifest preserving the repository's five valid and eleven invalid RFC 3339 lexical/calendar cases for future unchanged consumer execution.
 - Test-first `cwl_xapi_protocol_binding/v1` contract that keeps canonical xAPI 2.0 and cmi5 Quartz/xAPI 1.0.3 compatibility mutually exclusive without carrying statement payloads or rewriting historical records.
-- An exact two-valid/five-invalid protocol-binding fixture inventory covering valid xAPI 2.0, valid cmi5 Quartz, missing immutable cmi5 revision, cross-version claims, unknown surfaces, and statement-payload leakage.
+- An exact two-valid/six-invalid protocol-binding fixture inventory covering valid xAPI 2.0, valid cmi5 Quartz, missing normative authority or immutable cmi5 revision, cross-version claims, unknown surfaces, and statement-payload leakage; each invalid fixture is bound to its intended schema keyword and instance path.
 - Proposed ADR 0002 documenting the protocol-binding anti-corruption boundary and current standards evidence.
 - Dependency-free Rust and TypeScript fixture consumers that execute the unchanged timestamp manifest, verify the exact case identity/distribution and reject inverted expectations.
 

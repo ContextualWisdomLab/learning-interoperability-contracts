@@ -49,23 +49,26 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
                 self.assertEqual(list(self.validator.iter_errors(payload)), [])
 
     def test_invalid_cross_version_bindings_fail_closed(self) -> None:
-        """Reject version crossover, unknown surfaces, and permissive extra fields."""
+        """Reject every invalid fixture for its named schema invariant."""
         paths = sorted(INVALID_FIXTURES.glob("*.json"))
-        self.assertEqual(
-            {path.name for path in paths},
-            {
-                "cmi5-missing-revision.json",
-                "cmi5-with-xapi2-version.json",
-                "statement-payload-leak.json",
-                "unknown-surface.json",
-                "xapi2-with-cmi5-fields.json",
-            },
-        )
+        expected_failures = {
+            "cmi5-missing-authority.json": {("required", ())},
+            "cmi5-missing-revision.json": {("required", ())},
+            "cmi5-with-xapi2-version.json": {("const", ("xapi_version",))},
+            "statement-payload-leak.json": {("additionalProperties", ())},
+            "unknown-surface.json": {("enum", ("surface",))},
+            "xapi2-with-cmi5-fields.json": {("not", ())},
+        }
+        self.assertEqual({path.name for path in paths}, set(expected_failures))
         for path in paths:
             with self.subTest(path=path.name):
                 with path.open(encoding="utf-8") as handle:
                     payload = json.load(handle)
-                self.assertNotEqual(list(self.validator.iter_errors(payload)), [])
+                errors = list(self.validator.iter_errors(payload))
+                self.assertEqual(
+                    {(error.validator, tuple(error.absolute_path)) for error in errors},
+                    expected_failures[path.name],
+                )
 
     def test_no_statement_payload_is_owned_by_the_binding_contract(self) -> None:
         """Keep statement/runtime truth outside this protocol-selection value object."""
