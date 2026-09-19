@@ -57,8 +57,10 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
             "cmi5-with-xapi2-version.json": {("const", ("xapi_version",))},
             "statement-payload-leak.json": {("additionalProperties", ())},
             "unknown-surface.json": {("enum", ("surface",))},
+            "xapi2-missing-contract-id.json": {("required", ())},
             "xapi2-missing-profile-format-version.json": {("required", ())},
             "xapi2-missing-xapi-version.json": {("required", ())},
+            "xapi2-with-wrong-contract-id.json": {("const", ("contract_id",))},
             "xapi2-with-profile-format-2.0.json": {
                 ("const", ("xapi_profile_format_version",))
             },
