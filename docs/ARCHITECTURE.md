@@ -19,3 +19,5 @@ The CEFR profile stores immutable references and bounded result-envelope summari
 A reported overall result is not self-authorizing. The executable validator resolves the exact immutable assessment blueprint and accepts an overall result only when that blueprint permits overall reporting, every required domain is measured, and the result cites the blueprint's exact reporting policy.
 
 Consumers integrate through versioned contracts; cross-repository database access is not part of the architecture.
+
+Repository conformance consumers are test-only evidence, not SDKs or runtime services. The Rust and TypeScript timestamp consumers read the same committed language-neutral fixture and own no product state, network boundary, generated contract or release authority.

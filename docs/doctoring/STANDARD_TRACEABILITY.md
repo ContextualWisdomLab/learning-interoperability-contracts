@@ -26,6 +26,7 @@ Adoption status and implementation/conformance evidence are intentionally separa
 | Standards for Educational and Psychological Testing | 2014 | https://www.testingstandards.net/ | Intended interpretation/use, validity, reliability/precision, fairness, and reporting | Adopt for assessment governance | Downstream product evidence required |
 | WCAG | 2.2, W3C Recommendation 2024-12-12 | https://www.w3.org/TR/WCAG22/ | Accessible learning and contract-facing web content | Adopt | Not evidenced (adoption only) |
 | ATAG | 2.0, W3C Recommendation 2015-09-24 | https://www.w3.org/TR/ATAG20/ | Accessible authoring-tool contract | Adopt | Not evidenced (adoption only) |
+| RFC 3339 date-time | RFC 3339, Section 5.6 | https://www.rfc-editor.org/rfc/rfc3339#section-5.6 | Learning-event timestamp lexical and calendar boundary | Adopt for the v1 envelope | Candidate implementation: schema plus one 5-valid/11-invalid manifest executed by Python, Rust and TypeScript locally; hosted exact-head and release evidence pending |
 
 The Council of Europe does not verify or validate an examination provider's CEFR link. This repository must not use the Council of Europe logo or European emblem to imply certification or endorsement. A dated registry snapshot is a reproducibility boundary, not a substitute for task, standard-setting, linking, DIF/invariance, or classification-validation evidence.
 

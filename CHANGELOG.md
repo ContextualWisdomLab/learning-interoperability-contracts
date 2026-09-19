@@ -18,12 +18,14 @@
 - Executable Draft 2020-12 `date-time` format checking and regressions reject impossible blueprint and result calendar timestamps.
 - Distinct `cefr_aligned`, `cefr_linked`, and certification-decision evidence gates, including governed certification authority and policy references.
 - Proposed ADR 0003, CEFR research doctoring, fixed standards traceability, design specification, implementation plan, and focused regression tests.
+- Dependency-free Rust and TypeScript fixture consumers that execute the unchanged timestamp manifest, verify the exact case identity/distribution and reject inverted expectations.
 
 ### Changed
 
 - Repository Quality parses exactly one anchored ADR 0001 status section and fails closed if the proposed authority advances before protected integration.
 - Pinned the adopted cmi5 Quartz normative source to the official immutable Quartz release commit instead of the mutable development branch.
 - Reconciled the commercialization baseline so the immutable schema identity is distinguished from the still-missing protected release artifact, and portable timestamp conformance remains explicitly blocked until consumer format-assertion fixtures are executable across supported runtimes.
+- Pinned Rust 1.98.1 and Node.js 24.19.0 in repository Quality for cross-language timestamp evidence; hosted exact-head execution and protected release evidence remain required.
 - Pinned the repository quality job to `ubuntu-24.04` after the live exact-head `ubuntu-latest` job remained unassigned with no executed steps; no validation, security, review, or release gate was weakened.
 - Broadened repository Quality from only `develop`/`main` pull-request bases to every pull request so stacked feature PRs receive the same repository-local exact-head validation rather than silently skipping it.
 - Repository Quality now requires PRD and TRD presence so foundational product/technical contracts cannot regress silently.

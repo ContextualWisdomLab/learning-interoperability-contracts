@@ -29,6 +29,15 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Set up pinned Rust
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: "1.98.1"
+          components: rustfmt
+      - name: Set up pinned Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24.19.0"
       - name: Install hash-locked schema validator
         run: >-
           python -m pip install --disable-pip-version-check --only-binary=:all:
@@ -53,6 +62,8 @@ jobs:
               Path("CLAUDE.md"),
               Path("CHANGELOG.md"),
               Path("requirements-contracts-ci-hashes.txt"),
+              Path("conformance/rust/timestamp_manifest.rs"),
+              Path("conformance/typescript/timestamp_manifest.test.ts"),
               Path("docs/PRD.md"),
               Path("docs/TRD.md"),
               Path("docs/ARCHITECTURE.md"),
@@ -333,6 +344,14 @@ jobs:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
 
           print("learning interoperability bootstrap contract validation passed")
+      - name: Execute Rust timestamp consumer
+        run: |
+          rustfmt --edition 2021 --check conformance/rust/timestamp_manifest.rs
+          rustc -D warnings --edition=2021 --test conformance/rust/timestamp_manifest.rs \
+            -o "$RUNNER_TEMP/timestamp_manifest_rust"
+          "$RUNNER_TEMP/timestamp_manifest_rust"
+      - name: Execute TypeScript timestamp consumer
+        run: node --experimental-strip-types conformance/typescript/timestamp_manifest.test.ts
       - name: Run CEFR schema and blueprint authority regressions
         run: python -m unittest -v tests/test_validate_cefr_profile.py
       - name: Validate CEFR language-assessment profile
