@@ -38,7 +38,10 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
     def test_valid_bindings_are_accepted(self) -> None:
         """Accept canonical xAPI 2.0 and explicit Quartz/xAPI 1.0.3 compatibility bindings."""
         paths = sorted(VALID_FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(paths), 2)
+        self.assertEqual(
+            {path.name for path in paths},
+            {"cmi5-quartz.json", "xapi-2.0.json"},
+        )
         for path in paths:
             with self.subTest(path=path.name):
                 with path.open(encoding="utf-8") as handle:
@@ -48,7 +51,16 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
     def test_invalid_cross_version_bindings_fail_closed(self) -> None:
         """Reject version crossover, unknown surfaces, and permissive extra fields."""
         paths = sorted(INVALID_FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(paths), 4)
+        self.assertEqual(
+            {path.name for path in paths},
+            {
+                "cmi5-missing-revision.json",
+                "cmi5-with-xapi2-version.json",
+                "statement-payload-leak.json",
+                "unknown-surface.json",
+                "xapi2-with-cmi5-fields.json",
+            },
+        )
         for path in paths:
             with self.subTest(path=path.name):
                 with path.open(encoding="utf-8") as handle:
