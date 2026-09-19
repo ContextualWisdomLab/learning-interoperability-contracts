@@ -20,3 +20,4 @@
 - Repository Quality now requires PRD and TRD presence so foundational product/technical contracts cannot regress silently.
 - Rejected noncanonical leading-zero learning-event versions and added executable regressions for each semantic-version component.
 - Replaced the unhashed validator install command with a binary-only, fully hash-locked dependency set.
+- Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.
