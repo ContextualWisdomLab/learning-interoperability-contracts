@@ -43,6 +43,25 @@ class CefrProfileValidationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validator.validate_blueprint(blueprint)
 
+    def test_blueprint_concatenated_mutable_rld_revision_is_rejected(self) -> None:
+        """A mutable alias remains invalid when concatenated without delimiters."""
+        blueprint = validator.load_json(
+            validator.VALID_ROOT / "assessment-blueprint.json"
+        )
+        blueprint[
+            "language_reference_level_description_revision"
+        ] = "englishprofilelatest"
+
+        with self.assertRaises(ValueError):
+            validator.validate_blueprint(blueprint)
+
+    def test_sha256_bound_rld_revision_is_accepted(self) -> None:
+        """A digest-bound v1 revision identity is immutable and portable."""
+        validator.require_immutable_revision(
+            "english_profile_sha256_" + ("a" * 64),
+            "language_reference_level_description_revision",
+        )
+
     def test_overall_result_is_rejected_by_profile_only_blueprint(self) -> None:
         """A snapshot cannot self-authorize overall reporting."""
         profile_blueprint = validator.load_json(

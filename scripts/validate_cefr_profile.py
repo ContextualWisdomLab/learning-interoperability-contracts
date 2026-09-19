@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import re
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable
@@ -112,13 +113,20 @@ def require_reference(value: Any, field: str) -> None:
 
 
 def require_immutable_revision(value: Any, field: str) -> None:
-    """Reject mutable revision aliases while permitting publisher or snapshot IDs."""
+    """Require a v1 dated-snapshot or SHA-256-bound revision identity."""
     require_reference(value, field)
-    if re.search(
-        r"(?:^|[^a-z0-9])(?:latest|current|head|main)(?:$|[^a-z0-9])",
-        str(value).strip().lower(),
-    ):
-        raise ValueError(f"{field} must not use a mutable revision alias")
+    match = re.fullmatch(
+        r"[a-z0-9]+(?:_[a-z0-9]+)*_"
+        r"(?:snapshot_(\d{4}_\d{2}_\d{2})|sha256_([0-9a-f]{64}))",
+        str(value),
+    )
+    if match is None:
+        raise ValueError(f"{field} must use a dated snapshot or SHA-256 identity")
+    if match.group(1) is not None:
+        try:
+            datetime.strptime(match.group(1), "%Y_%m_%d")
+        except ValueError as error:
+            raise ValueError(f"{field} contains an invalid snapshot date") from error
 
 
 def validate_probability_set(value: Any, field: str) -> None:
@@ -410,6 +418,7 @@ def main() -> None:
         validate_result(load_json(path))
     negative: dict[str, Callable[[dict[str, Any]], None]] = {
         "high-stakes-blueprint-without-standard-setting.json": validate_blueprint,
+        "blueprint-with-concatenated-mutable-rld-revision.json": validate_blueprint,
         "blueprint-with-mutable-rld-revision.json": validate_blueprint,
         "task-with-copied-descriptor-text.json": validate_task,
         "overall-result-with-incomplete-required-domain.json": validate_result,

@@ -41,7 +41,7 @@ language_reference_level_description_reference
 language_reference_level_description_revision
 ```
 
-The revision must be an immutable publisher revision, edition, digest-bound snapshot, or dated registry snapshot. Mutable aliases such as `latest` or `current` are rejected. Version 1 has no no-RLD exception; introducing one would require an explicit contract change, new claim semantics, and positive/negative conformance fixtures.
+The v1 machine contract accepts only a calendar-valid dated snapshot identifier ending in `snapshot_YYYY_MM_DD` or a digest-bound identifier ending in `sha256_` plus 64 lowercase hexadecimal characters. Mutable aliases, including delimited or concatenated forms such as `english_profile_latest` and `englishprofilelatest`, fail closed. A direct publisher revision or edition requires a future grammar change with positive and deliberately invalid fixtures. Version 1 has no no-RLD exception; introducing one would require an explicit contract change, new claim semantics, and positive/negative conformance fixtures.
 
 The public Council of Europe English RLD registry identifies the English Profile programme but exposes no single immutable edition identifier. The English fixtures therefore pin the authority as `coe_rld_registry_english_profile` and the dated registry snapshot `english_profile_registry_snapshot_2026_08_27`. That snapshot is a source-discovery identity, not a claim that all English Profile research has become one fixed operational RLD edition.
 
