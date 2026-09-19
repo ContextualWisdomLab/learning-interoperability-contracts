@@ -19,6 +19,7 @@
 
 ### Changed
 
+- Public documentation navigation now uses artifact-relative links, and repository Quality rejects mutable `main`/`develop` links in the landing page.
 - Repository Quality parses exactly one anchored ADR 0001 status section and fails closed if the proposed authority advances before protected integration.
 - Pinned the adopted cmi5 Quartz normative source to the official immutable Quartz release commit instead of the mutable development branch.
 - Reconciled the commercialization baseline so the immutable schema identity is distinguished from the still-missing protected release artifact, and portable timestamp conformance remains explicitly blocked until consumer format-assertion fixtures are executable across supported runtimes.
