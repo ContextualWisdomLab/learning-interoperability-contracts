@@ -1,0 +1,388 @@
+name: Learning Contracts Quality
+
+on:
+  pull_request: {}
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: learning-contracts-quality-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    # Live exact-head evidence showed ubuntu-latest remaining unassigned with no
+    # executed steps. The explicit Ubuntu 24.04 image is already proven usable
+    # by the sibling Learning Content Studio quality lane.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up pinned Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Set up pinned Rust
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: "1.98.1"
+          components: rustfmt
+      - name: Set up pinned Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24.19.0"
+      - name: Install hash-locked schema validator
+        run: >-
+          python -m pip install --disable-pip-version-check --only-binary=:all:
+          --require-hashes -r requirements-contracts-ci-hashes.txt
+      - name: Validate documentation and schemas
+        shell: python3 {0}
+        run: |
+          import json
+          import re
+          import subprocess
+          from datetime import datetime
+          from pathlib import Path
+
+          from jsonschema import Draft202012Validator, FormatChecker
+          from jsonschema.exceptions import SchemaError
+
+          schema_path = Path("schemas/v1/learning-event.schema.json")
+          fixture_path = Path("fixtures/v1/learning_event_envelope_cases.json")
+          timestamp_fixture_path = Path("fixtures/v1/timestamp_format_cases.json")
+          required = [
+              Path("README.md"),
+              Path(".gitignore"),
+              Path("AGENTS.md"),
+              Path("CLAUDE.md"),
+              Path("CHANGELOG.md"),
+              Path("requirements-contracts-ci-hashes.txt"),
+              Path("conformance/rust/timestamp_manifest.rs"),
+              Path("conformance/typescript/timestamp_manifest.test.ts"),
+              Path("docs/PRD.md"),
+              Path("docs/TRD.md"),
+              Path("docs/ARCHITECTURE.md"),
+              Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
+              Path("docs/index.md"),
+              Path("docs/product-technical-gap-baseline.md"),
+              schema_path,
+              fixture_path,
+              timestamp_fixture_path,
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              raise SystemExit(f"missing required bootstrap files: {missing}")
+
+          tracked_paths = subprocess.run(
+              ["git", "ls-files"], check=True, capture_output=True, text=True
+          ).stdout.splitlines()
+          tracked_python_artifacts = [
+              path
+              for path in tracked_paths
+              if "__pycache__" in Path(path).parts or path.endswith((".pyc", ".pyo"))
+          ]
+          if tracked_python_artifacts:
+              raise SystemExit(
+                  f"tracked Python runtime artifacts are forbidden: {tracked_python_artifacts}"
+              )
+
+          authority_adr = Path("docs/adr/0001-contract-authority-boundary.md").read_text(
+              encoding="utf-8"
+          )
+          authority_statuses = re.findall(
+              r"(?m)^## Status\r?\n\r?\n([^\r\n]+)$", authority_adr
+          )
+          if len(authority_statuses) != 1 or not authority_statuses[0].startswith(
+              "Proposed."
+          ):
+              raise SystemExit(
+                  "ADR 0001 must have exactly one Proposed status until protected integration establishes authority"
+              )
+
+          schemas = {}
+          for path in Path("schemas").rglob("*.json"):
+              with path.open(encoding="utf-8") as handle:
+                  value = json.load(handle)
+              try:
+                  Draft202012Validator.check_schema(value)
+              except SchemaError as exc:
+                  raise SystemExit(f"invalid Draft 2020-12 schema in {path}: {exc.message}") from exc
+              schemas[path] = value
+
+          # Prove the validator is checking schema semantics rather than JSON syntax alone.
+          try:
+              Draft202012Validator.check_schema({"$schema": "https://json-schema.org/draft/2020-12/schema", "type": 7})
+          except SchemaError:
+              pass
+          else:
+              raise SystemExit("schema validator accepted an invalid type keyword value")
+
+          schema = schemas[schema_path]
+          if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+              raise SystemExit("learning event schema must use JSON Schema Draft 2020-12")
+
+          version = schema.get("x-cwl-schema-version", "")
+          version_match = re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version)
+          if not version_match:
+              raise SystemExit("learning event schema must declare a canonical semantic version")
+          path_major = schema_path.parent.name
+          if path_major != f"v{version_match.group(1)}":
+              raise SystemExit(
+                  f"schema major version {version_match.group(1)} must match path segment {path_major!r}"
+              )
+
+          # `$id` is a canonical logical identifier, not a mutable branch URL or a
+          # claim that an unreleased schema has already been published. Its semantic
+          # version therefore determines an immutable identity before the first release.
+          expected_id = (
+              "urn:contextualwisdomlab:learning-interoperability-contracts:"
+              f"learning-event:{version}"
+          )
+          if schema.get("$id") != expected_id:
+              raise SystemExit("learning event schema $id must match the immutable version-derived identity")
+
+          event_version_validator = Draft202012Validator(schema["properties"]["event_version"])
+          for candidate in ("0.0.0", "1.0.0", "10.20.30"):
+              if list(event_version_validator.iter_errors(candidate)):
+                  raise SystemExit(f"event_version rejects canonical semantic version: {candidate}")
+          for candidate in ("01.0.0", "1.00.0", "1.0.00"):
+              if not list(event_version_validator.iter_errors(candidate)):
+                  raise SystemExit(f"event_version accepts noncanonical semantic version: {candidate}")
+
+          def parse_contract_timestamp(candidate: str) -> datetime:
+              normalized = candidate
+              if len(normalized) > 10 and normalized[10] == "t":
+                  normalized = normalized[:10] + "T" + normalized[11:]
+              if normalized.endswith(("Z", "z")):
+                  normalized = normalized[:-1] + "+00:00"
+              return datetime.fromisoformat(normalized)
+
+          timestamp_fixture = json.loads(timestamp_fixture_path.read_text(encoding="utf-8"))
+          if timestamp_fixture.get("fixture_contract") != "learning_event_timestamp_v1":
+              raise SystemExit("timestamp fixture contract identity mismatch")
+
+          timestamp_cases = timestamp_fixture.get("timestamp_cases")
+          if not isinstance(timestamp_cases, list):
+              raise SystemExit("timestamp fixture manifest must contain timestamp_cases")
+
+          required_timestamp_case_names = {
+              "valid_utc_uppercase",
+              "valid_utc_lowercase",
+              "valid_leap_day_maximum_offset",
+              "valid_negative_half_hour_offset",
+              "valid_fractional_seconds",
+              "invalid_date_only",
+              "invalid_non_date",
+              "invalid_missing_offset",
+              "invalid_non_leap_day",
+              "invalid_month",
+              "invalid_month_day",
+              "invalid_hour_24",
+              "invalid_minute_60",
+              "invalid_leap_second",
+              "invalid_offset_hour_24",
+              "invalid_offset_minute_60",
+          }
+          timestamp_case_names = [
+              case.get("case_name") for case in timestamp_cases if isinstance(case, dict)
+          ]
+          if len(timestamp_case_names) != len(timestamp_cases):
+              raise SystemExit("every timestamp fixture case must be an object")
+          if len(set(timestamp_case_names)) != len(timestamp_case_names):
+              raise SystemExit("timestamp fixture case names must be unique")
+          if set(timestamp_case_names) != required_timestamp_case_names:
+              raise SystemExit(
+                  "timestamp fixture coverage mismatch: "
+                  f"{sorted(set(timestamp_case_names) ^ required_timestamp_case_names)}"
+              )
+
+          for case in timestamp_cases:
+              if set(case) != {
+                  "case_name",
+                  "timestamp_value",
+                  "expected_valid",
+                  "failure_class",
+              }:
+                  raise SystemExit(f"timestamp fixture {case.get('case_name')!r} has an invalid shape")
+              if not isinstance(case["timestamp_value"], str):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} value must be a string")
+              if not isinstance(case["expected_valid"], bool):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} expected_valid must be boolean")
+              if case["failure_class"] not in (None, "lexical", "calendar"):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} has an invalid failure class")
+
+          valid_timestamps = tuple(
+              case["timestamp_value"] for case in timestamp_cases if case["expected_valid"]
+          )
+          invalid_timestamps = tuple(
+              case["timestamp_value"] for case in timestamp_cases if not case["expected_valid"]
+          )
+          invalid_calendar_timestamps = tuple(
+              case["timestamp_value"]
+              for case in timestamp_cases
+              if case["failure_class"] == "calendar"
+          )
+          if (len(valid_timestamps), len(invalid_timestamps)) != (5, 11):
+              raise SystemExit(
+                  "timestamp fixture manifest must contain 5 valid and 11 invalid cases"
+              )
+
+          format_checker = FormatChecker()
+          if format_checker.conforms("2026-02-29T14:00:00Z", "date-time"):
+              raise SystemExit("date-time format checker is inactive or accepts an impossible calendar date")
+
+          for field_name in ("occurred_at", "recorded_at"):
+              field = schema["properties"][field_name]
+              if field.get("format") != "date-time" or not field.get("pattern"):
+                  raise SystemExit(f"{field_name} must require date-time format and a syntax pattern")
+
+              # Draft 2020-12's default metaschema treats format as annotation. The
+              # contract gate therefore opts into executable format checking and
+              # combines it with the committed lexical pattern.
+              field_validator = Draft202012Validator(field, format_checker=format_checker)
+
+              for candidate in valid_timestamps:
+                  errors = list(field_validator.iter_errors(candidate))
+                  if errors:
+                      raise SystemExit(
+                          f"{field_name} schema rejects valid contract timestamp {candidate}: "
+                          + "; ".join(error.message for error in errors)
+                      )
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError as exc:
+                      raise SystemExit(f"{field_name} parser rejects valid timestamp: {candidate}") from exc
+
+              for candidate in invalid_timestamps:
+                  errors = list(field_validator.iter_errors(candidate))
+                  if not errors:
+                      raise SystemExit(f"{field_name} schema accepts invalid timestamp: {candidate}")
+
+              for candidate in invalid_calendar_timestamps:
+                  try:
+                      parse_contract_timestamp(candidate)
+                  except ValueError:
+                      pass
+                  else:
+                      raise SystemExit(f"{field_name} parser accepts impossible calendar date: {candidate}")
+
+          fixture_document = json.loads(fixture_path.read_text(encoding="utf-8"))
+          if fixture_document.get("schema_id") != schema.get("$id"):
+              raise SystemExit("learning-event fixtures must target the exact schema identity")
+
+          fixture_cases = fixture_document.get("cases")
+          if not isinstance(fixture_cases, list):
+              raise SystemExit("learning-event fixture manifest must contain a cases array")
+
+          required_fixture_case_names = {
+              "valid_minimal_envelope",
+              "valid_complete_envelope",
+              "invalid_missing_event_id",
+              "invalid_missing_event_type",
+              "invalid_missing_event_version",
+              "invalid_missing_tenant_id",
+              "invalid_missing_occurred_at",
+              "invalid_missing_recorded_at",
+              "invalid_missing_provenance_reference",
+              "invalid_unknown_property",
+              "invalid_empty_event_id",
+              "invalid_short_event_type",
+              "invalid_noncanonical_event_version",
+              "invalid_empty_tenant_id",
+              "invalid_impossible_occurred_at",
+              "invalid_recorded_at_without_offset",
+              "invalid_empty_provenance_reference",
+              "invalid_non_object_data",
+          }
+          fixture_case_names = [case.get("name") for case in fixture_cases if isinstance(case, dict)]
+          if len(fixture_case_names) != len(fixture_cases):
+              raise SystemExit("every learning-event fixture case must be an object")
+          if len(set(fixture_case_names)) != len(fixture_case_names):
+              raise SystemExit("learning-event fixture names must be unique")
+          if set(fixture_case_names) != required_fixture_case_names:
+              missing_cases = sorted(required_fixture_case_names - set(fixture_case_names))
+              unexpected_cases = sorted(set(fixture_case_names) - required_fixture_case_names)
+              raise SystemExit(
+                  f"learning-event fixture coverage mismatch: missing={missing_cases}, unexpected={unexpected_cases}"
+              )
+
+          envelope_validator = Draft202012Validator(schema, format_checker=format_checker)
+          positive_count = 0
+          negative_count = 0
+          for case in fixture_cases:
+              if set(case) != {"name", "expected_valid", "instance"}:
+                  raise SystemExit(f"fixture {case.get('name')!r} has an invalid case shape")
+              expected_valid = case["expected_valid"]
+              if not isinstance(expected_valid, bool):
+                  raise SystemExit(f"fixture {case['name']!r} expected_valid must be boolean")
+
+              errors = list(envelope_validator.iter_errors(case["instance"]))
+              actual_valid = not errors
+              if actual_valid is not expected_valid:
+                  messages = "; ".join(error.message for error in errors) or "no validation errors"
+                  raise SystemExit(
+                      f"fixture {case['name']!r} expected valid={expected_valid}, "
+                      f"got valid={actual_valid}: {messages}"
+                  )
+              if expected_valid:
+                  positive_count += 1
+              else:
+                  negative_count += 1
+
+          if (positive_count, negative_count) != (2, 16):
+              raise SystemExit(
+                  f"fixture manifest must contain 2 positive and 16 negative cases, "
+                  f"got {positive_count} and {negative_count}"
+              )
+
+          forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
+          for path in required:
+              text = path.read_text(encoding="utf-8")
+              for marker in forbidden:
+                  if marker in text:
+                      raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
+
+          documentation_landing = Path("docs/index.md").read_text(encoding="utf-8")
+          mutable_documentation_link = re.compile(
+              r"https://github\.com/ContextualWisdomLab/"
+              r"learning-interoperability-contracts/(?:blob|tree)/(?:main|develop)/"
+          )
+          if mutable_documentation_link.search(documentation_landing):
+              raise SystemExit(
+                  "public documentation landing must not link package documentation "
+                  "through mutable main/develop refs"
+              )
+
+          required_landing_links = {
+              "[Product requirements](PRD.md)",
+              "[Technical requirements](TRD.md)",
+              "[Architecture](ARCHITECTURE.md)",
+              "[Standards traceability](doctoring/STANDARD_TRACEABILITY.md)",
+              "[Product and technical gap baseline](product-technical-gap-baseline.md)",
+          }
+          missing_landing_links = sorted(
+              link for link in required_landing_links if link not in documentation_landing
+          )
+          if missing_landing_links:
+              raise SystemExit(
+                  f"public documentation landing is missing artifact-relative links: "
+                  f"{missing_landing_links}"
+              )
+
+          print("learning interoperability bootstrap contract validation passed")
+      - name: Execute Rust timestamp consumer
+        run: |
+          rustfmt --edition 2021 --check conformance/rust/timestamp_manifest.rs
+          rustc -D warnings --edition=2021 --test conformance/rust/timestamp_manifest.rs \
+            -o "$RUNNER_TEMP/timestamp_manifest_rust"
+          "$RUNNER_TEMP/timestamp_manifest_rust"
+      - name: Execute TypeScript timestamp consumer
+        run: node --experimental-strip-types conformance/typescript/timestamp_manifest.test.ts
