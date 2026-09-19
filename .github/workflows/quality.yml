@@ -57,6 +57,7 @@ jobs:
               Path("docs/TRD.md"),
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/adr/0002-xapi-protocol-binding.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
               Path("docs/product-technical-gap-baseline.md"),
               schema_path,

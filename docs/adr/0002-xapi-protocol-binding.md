@@ -1,6 +1,6 @@
 # ADR 0002: Explicit xAPI protocol binding without historical translation
 
-- Status: Candidate
+- Status: Proposed
 - Date: 2026-09-02
 - Decision owner: Learning Contract Authority
 - Tracks: issue #3
