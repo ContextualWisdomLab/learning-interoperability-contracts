@@ -62,6 +62,26 @@ class CefrProfileValidationTests(unittest.TestCase):
             "language_reference_level_description_revision",
         )
 
+    def test_blueprint_impossible_calendar_timestamp_is_rejected(self) -> None:
+        """Draft 2020-12 date-time validation must reject impossible dates."""
+        blueprint = validator.load_json(
+            validator.VALID_ROOT / "assessment-blueprint.json"
+        )
+        blueprint["published_at"] = "2026-02-29T10:00:00Z"
+
+        with self.assertRaises(ValueError):
+            validator.validate_blueprint(blueprint)
+
+    def test_result_impossible_calendar_timestamp_is_rejected(self) -> None:
+        """Result observed_at values require calendar-valid date-time values."""
+        result = validator.load_json(
+            validator.VALID_ROOT / "cefr-result-snapshot-profile-only.json"
+        )
+        result["observed_at"] = "2026-02-29T10:00:00Z"
+
+        with self.assertRaises(ValueError):
+            validator.validate_result(result)
+
     def test_overall_result_is_rejected_by_profile_only_blueprint(self) -> None:
         """A snapshot cannot self-authorize overall reporting."""
         profile_blueprint = validator.load_json(

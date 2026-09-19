@@ -15,6 +15,7 @@
 - Rights-safe `cwl_cefr_language_assessment/v1` blueprint, task, and immutable domain-result contracts.
 - CEFR positive/negative fixture gates covering standard-setting, protected content, probability mass, required-domain completeness, blueprint overall-reporting authority, and exact reporting-policy equality.
 - Exact target-language profile/RLD revision requirement; v1 accepts only a calendar-valid dated snapshot or SHA-256-bound identity, so delimited and concatenated mutable aliases fail closed.
+- Executable Draft 2020-12 `date-time` format checking and regressions reject impossible blueprint and result calendar timestamps.
 - Distinct `cefr_aligned`, `cefr_linked`, and certification-decision evidence gates, including governed certification authority and policy references.
 - Proposed ADR 0003, CEFR research doctoring, fixed standards traceability, design specification, implementation plan, and focused regression tests.
 

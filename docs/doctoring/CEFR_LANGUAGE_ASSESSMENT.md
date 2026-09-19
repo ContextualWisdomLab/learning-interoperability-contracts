@@ -43,6 +43,8 @@ language_reference_level_description_revision
 
 The v1 machine contract accepts only a calendar-valid dated snapshot identifier ending in `snapshot_YYYY_MM_DD` or a digest-bound identifier ending in `sha256_` plus 64 lowercase hexadecimal characters. Mutable aliases, including delimited or concatenated forms such as `english_profile_latest` and `englishprofilelatest`, fail closed. A direct publisher revision or edition requires a future grammar change with positive and deliberately invalid fixtures. Version 1 has no no-RLD exception; introducing one would require an explicit contract change, new claim semantics, and positive/negative conformance fixtures.
 
+Every schema `date-time` is executable rather than annotation-only: the offline Draft 2020-12 validator enables format checking so lexical matches with impossible calendar dates, such as 29 February 2026, fail closed for blueprint and result timestamps.
+
 The public Council of Europe English RLD registry identifies the English Profile programme but exposes no single immutable edition identifier. The English fixtures therefore pin the authority as `coe_rld_registry_english_profile` and the dated registry snapshot `english_profile_registry_snapshot_2026_08_27`. That snapshot is a source-discovery identity, not a claim that all English Profile research has become one fixed operational RLD edition.
 
 For content-specification research, the exact published forerunner retained in doctoring is North, Ortega, and Sheehan's *A Core Inventory for General English* (2010; ISBN 978-0-86355-653-1). It is not silently substituted for the English Profile registry identity in the contract.

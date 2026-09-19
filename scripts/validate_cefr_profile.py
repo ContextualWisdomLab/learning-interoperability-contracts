@@ -10,7 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError
 from referencing import Registry, Resource
 
@@ -77,7 +77,11 @@ def validate_against_schema(value: dict[str, Any], schema_filename: str) -> None
         schema = load_schemas()[schema_filename]
     except KeyError as error:
         raise ValueError(f"unknown CEFR schema {schema_filename!r}") from error
-    validator = Draft202012Validator(schema, registry=build_schema_registry())
+    validator = Draft202012Validator(
+        schema,
+        registry=build_schema_registry(),
+        format_checker=FormatChecker(),
+    )
     errors = sorted(validator.iter_errors(value), key=lambda error: error.json_path)
     if errors:
         first = errors[0]
@@ -418,6 +422,7 @@ def main() -> None:
         validate_result(load_json(path))
     negative: dict[str, Callable[[dict[str, Any]], None]] = {
         "high-stakes-blueprint-without-standard-setting.json": validate_blueprint,
+        "blueprint-with-impossible-published-at.json": validate_blueprint,
         "blueprint-with-concatenated-mutable-rld-revision.json": validate_blueprint,
         "blueprint-with-mutable-rld-revision.json": validate_blueprint,
         "task-with-copied-descriptor-text.json": validate_task,
