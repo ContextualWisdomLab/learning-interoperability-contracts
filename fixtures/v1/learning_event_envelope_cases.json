@@ -1,0 +1,240 @@
+{
+  "schema_id": "urn:contextualwisdomlab:learning-interoperability-contracts:learning-event:1.0.0",
+  "cases": [
+    {
+      "name": "valid_minimal_envelope",
+      "expected_valid": true,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2024-02-29T23:59:59Z",
+        "recorded_at": "2024-03-01T00:00:00Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "valid_complete_envelope",
+      "expected_valid": true,
+      "instance": {
+        "event_id": "event-002",
+        "event_type": "learning.activity.started",
+        "event_version": "10.20.30",
+        "tenant_id": "tenant-002",
+        "subject_reference": null,
+        "occurred_at": "2026-01-01t00:00:00.123456-05:30",
+        "recorded_at": "2026-01-01T05:30:01Z",
+        "correlation_id": "correlation-001",
+        "causation_id": null,
+        "provenance_reference": "provenance-002",
+        "data": {
+          "activity_reference": "activity-001"
+        }
+      }
+    },
+    {
+      "name": "invalid_missing_event_id",
+      "expected_valid": false,
+      "instance": {
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_event_type",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_event_version",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_tenant_id",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_occurred_at",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_recorded_at",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_missing_provenance_reference",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z"
+      }
+    },
+    {
+      "name": "invalid_unknown_property",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001",
+        "unexpected_field": true
+      }
+    },
+    {
+      "name": "invalid_empty_event_id",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_short_event_type",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "xy",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_noncanonical_event_version",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "01.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_empty_tenant_id",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_impossible_occurred_at",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-02-29T00:00:00Z",
+        "recorded_at": "2026-03-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_recorded_at_without_offset",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_empty_provenance_reference",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": ""
+      }
+    },
+    {
+      "name": "invalid_non_object_data",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001",
+        "data": []
+      }
+    }
+  ]
+}

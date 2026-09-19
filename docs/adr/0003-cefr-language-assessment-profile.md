@@ -1,11 +1,8 @@
-# ADR 0002: Rights-safe CEFR language-assessment profile
+# ADR 0003: Rights-safe CEFR language-assessment profile
 
 ## Status
 
-Accepted for the active stacked PR; not protected-`develop` truth until merged.
-
-Approved by: ContextualWisdomLab repository owner  
-Approval date: 2026-08-27
+Proposed. This Draft stacked PR is review evidence only; the decision is not protected-`develop` truth and has no release authority.
 
 ## Context
 

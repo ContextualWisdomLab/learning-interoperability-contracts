@@ -387,7 +387,7 @@ def main() -> None:
     """Run presence, Draft 2020-12, positive, and negative fixture validation."""
     required = [
         PROFILE_ROOT / "README.md",
-        Path("docs/adr/0002-cefr-language-assessment-profile.md"),
+        Path("docs/adr/0003-cefr-language-assessment-profile.md"),
         Path("docs/doctoring/CEFR_LANGUAGE_ASSESSMENT.md"),
         Path("docs/superpowers/specs/2026-08-27-cefr-language-assessment-profile-design.md"),
         Path("docs/superpowers/plans/2026-08-27-cefr-language-assessment-profile.md"),

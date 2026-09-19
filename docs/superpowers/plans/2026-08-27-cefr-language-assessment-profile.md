@@ -69,7 +69,7 @@
 
 **Files:**
 - Create: `profiles/cwl_cefr_language_assessment/v1/README.md`
-- Create: `docs/adr/0002-cefr-language-assessment-profile.md`
+- Create: `docs/adr/0003-cefr-language-assessment-profile.md`
 - Create: `docs/doctoring/CEFR_LANGUAGE_ASSESSMENT.md`
 - Modify: `README.md`
 - Modify: `CHANGELOG.md`
