@@ -78,7 +78,8 @@ Current repository Quality must:
 4. execute that unchanged manifest in dependency-free Rust and TypeScript consumers, including a deliberately inverted-expectation regression;
 5. execute the version-bound learning-event fixture manifest, including every current envelope rejection invariant, and additional surface-specific valid/invalid fixtures as they are introduced;
 6. run on stacked pull requests as well as protected-default-branch PRs;
-7. check out the exact PR head with persisted credentials disabled.
+7. reject tracked Python bytecode/cache output so validation cannot mutate the source artifact set;
+8. check out the exact PR head with persisted credentials disabled.
 
 Executable SDK/conformance code introduced later must reach 100% production statement/branch coverage for touched surfaces and public documentation coverage, with warnings treated as defects rather than suppressed.
 
