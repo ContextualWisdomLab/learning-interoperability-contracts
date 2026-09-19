@@ -11,3 +11,5 @@ Authority boundaries:
 - Psychometrics Commons: assessment sessions, responses, and score snapshots.
 
 Consumers integrate through versioned contracts; cross-repository database access is not part of the architecture.
+
+Repository conformance consumers are test-only evidence, not SDKs or runtime services. The Rust and TypeScript timestamp consumers read the same committed language-neutral fixture and own no product state, network boundary, generated contract or release authority.
