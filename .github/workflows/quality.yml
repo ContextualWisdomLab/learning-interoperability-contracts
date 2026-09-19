@@ -76,6 +76,14 @@ jobs:
                   "ADR 0001 must remain Proposed until protected integration establishes authority"
               )
 
+          cefr_adr = Path("docs/adr/0003-cefr-language-assessment-profile.md").read_text(
+              encoding="utf-8"
+          )
+          if "## Status\n\nProposed." not in cefr_adr:
+              raise SystemExit(
+                  "ADR 0003 must remain Proposed until protected integration establishes the CEFR profile"
+              )
+
           schemas = {}
           for path in Path("schemas").rglob("*.json"):
               with path.open(encoding="utf-8") as handle:

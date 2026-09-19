@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable
@@ -113,7 +114,10 @@ def require_reference(value: Any, field: str) -> None:
 def require_immutable_revision(value: Any, field: str) -> None:
     """Reject mutable revision aliases while permitting publisher or snapshot IDs."""
     require_reference(value, field)
-    if str(value).strip().lower() in {"latest", "current", "head", "main"}:
+    if re.search(
+        r"(?:^|[^a-z0-9])(?:latest|current|head|main)(?:$|[^a-z0-9])",
+        str(value).strip().lower(),
+    ):
         raise ValueError(f"{field} must not use a mutable revision alias")
 
 
@@ -406,6 +410,7 @@ def main() -> None:
         validate_result(load_json(path))
     negative: dict[str, Callable[[dict[str, Any]], None]] = {
         "high-stakes-blueprint-without-standard-setting.json": validate_blueprint,
+        "blueprint-with-mutable-rld-revision.json": validate_blueprint,
         "task-with-copied-descriptor-text.json": validate_task,
         "overall-result-with-incomplete-required-domain.json": validate_result,
         "overall-result-with-profile-only-blueprint.json": validate_result,

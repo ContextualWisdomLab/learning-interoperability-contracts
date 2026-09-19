@@ -31,6 +31,18 @@ class CefrProfileValidationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validator.validate_blueprint(blueprint)
 
+    def test_blueprint_compound_mutable_rld_revision_is_rejected(self) -> None:
+        """Mutable alias tokens cannot masquerade as immutable RLD revisions."""
+        blueprint = validator.load_json(
+            validator.VALID_ROOT / "assessment-blueprint.json"
+        )
+        blueprint[
+            "language_reference_level_description_revision"
+        ] = "english_profile_latest"
+
+        with self.assertRaises(ValueError):
+            validator.validate_blueprint(blueprint)
+
     def test_overall_result_is_rejected_by_profile_only_blueprint(self) -> None:
         """A snapshot cannot self-authorize overall reporting."""
         profile_blueprint = validator.load_json(
