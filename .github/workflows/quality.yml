@@ -71,9 +71,14 @@ jobs:
           authority_adr = Path("docs/adr/0001-contract-authority-boundary.md").read_text(
               encoding="utf-8"
           )
-          if "## Status\n\nProposed." not in authority_adr:
+          authority_statuses = re.findall(
+              r"(?m)^## Status\r?\n\r?\n([^\r\n]+)$", authority_adr
+          )
+          if len(authority_statuses) != 1 or not authority_statuses[0].startswith(
+              "Proposed."
+          ):
               raise SystemExit(
-                  "ADR 0001 must remain Proposed until protected integration establishes authority"
+                  "ADR 0001 must have exactly one Proposed status until protected integration establishes authority"
               )
 
           xapi_adr = Path("docs/adr/0002-xapi-protocol-binding.md").read_text(
