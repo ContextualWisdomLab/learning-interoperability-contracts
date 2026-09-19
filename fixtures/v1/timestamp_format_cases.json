@@ -1,0 +1,101 @@
+{
+  "fixture_contract": "learning_event_timestamp_v1",
+  "timestamp_cases": [
+    {
+      "case_name": "valid_utc_uppercase",
+      "timestamp_value": "2026-08-19T14:00:00Z",
+      "expected_valid": true,
+      "failure_class": null
+    },
+    {
+      "case_name": "valid_utc_lowercase",
+      "timestamp_value": "2026-08-19t14:00:00z",
+      "expected_valid": true,
+      "failure_class": null
+    },
+    {
+      "case_name": "valid_leap_day_maximum_offset",
+      "timestamp_value": "2024-02-29T23:59:59+14:00",
+      "expected_valid": true,
+      "failure_class": null
+    },
+    {
+      "case_name": "valid_negative_half_hour_offset",
+      "timestamp_value": "2026-01-01T00:00:00-05:30",
+      "expected_valid": true,
+      "failure_class": null
+    },
+    {
+      "case_name": "valid_fractional_seconds",
+      "timestamp_value": "2026-01-01T00:00:00.123456Z",
+      "expected_valid": true,
+      "failure_class": null
+    },
+    {
+      "case_name": "invalid_date_only",
+      "timestamp_value": "2026-08-19",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_non_date",
+      "timestamp_value": "not-a-date",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_missing_offset",
+      "timestamp_value": "2026-08-19T14:00:00",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_non_leap_day",
+      "timestamp_value": "2026-02-29T14:00:00Z",
+      "expected_valid": false,
+      "failure_class": "calendar"
+    },
+    {
+      "case_name": "invalid_month",
+      "timestamp_value": "2026-13-01T14:00:00Z",
+      "expected_valid": false,
+      "failure_class": "calendar"
+    },
+    {
+      "case_name": "invalid_month_day",
+      "timestamp_value": "2026-04-31T14:00:00Z",
+      "expected_valid": false,
+      "failure_class": "calendar"
+    },
+    {
+      "case_name": "invalid_hour_24",
+      "timestamp_value": "2026-01-01T24:00:00Z",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_minute_60",
+      "timestamp_value": "2026-01-01T14:60:00Z",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_leap_second",
+      "timestamp_value": "2026-01-01T14:00:60Z",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_offset_hour_24",
+      "timestamp_value": "2026-01-01T14:00:00+24:00",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    },
+    {
+      "case_name": "invalid_offset_minute_60",
+      "timestamp_value": "2026-01-01T14:00:00+14:60",
+      "expected_valid": false,
+      "failure_class": "lexical"
+    }
+  ]
+}
