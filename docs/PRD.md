@@ -66,7 +66,7 @@ Rust, TypeScript and Python package boundaries may be generated only from releas
 
 ## Current commercialization slice
 
-The bootstrap parent establishes repository authority, a versioned learning-event envelope candidate, Draft 2020-12 validation, timestamp edge cases, architecture/ADR/standards evidence, explicit PRD/TRD and exact-head quality gates. Issue #3 / PR #7 adds a separate internal protocol-selection candidate for xAPI 2.0 versus cmi5 Quartz without claiming statement/profile conformance.
+The bootstrap parent establishes repository authority, a versioned learning-event envelope candidate, Draft 2020-12 validation, a complete synthetic positive/negative envelope fixture manifest, timestamp edge cases, architecture/ADR/standards evidence, explicit PRD/TRD and exact-head quality gates. Issue #3 / PR #7 adds a separate internal protocol-selection candidate for xAPI 2.0 versus cmi5 Quartz without claiming statement/profile conformance.
 
 Neither surface is a released supported contract until the protected integration/release gates below complete.
 

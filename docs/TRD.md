@@ -75,7 +75,7 @@ Current repository Quality must:
 1. check required product/technical/architecture/traceability documents;
 2. validate JSON Schema Draft 2020-12 metaschema semantics rather than JSON syntax only;
 3. execute date-time format assertion plus lexical/calendar edge cases for the learning-event envelope;
-4. execute additional surface-specific valid/invalid fixtures as they are introduced;
+4. execute the version-bound learning-event fixture manifest, including every current envelope rejection invariant, and additional surface-specific valid/invalid fixtures as they are introduced;
 5. run on stacked pull requests as well as protected-default-branch PRs;
 6. check out the exact PR head with persisted credentials disabled.
 

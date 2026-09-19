@@ -45,6 +45,7 @@ jobs:
           from jsonschema.exceptions import SchemaError
 
           schema_path = Path("schemas/v1/learning-event.schema.json")
+          fixture_path = Path("fixtures/v1/learning_event_envelope_cases.json")
           required = [
               Path("README.md"),
               Path("AGENTS.md"),
@@ -58,6 +59,7 @@ jobs:
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
               Path("docs/product-technical-gap-baseline.md"),
               schema_path,
+              fixture_path,
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
@@ -184,6 +186,75 @@ jobs:
                       pass
                   else:
                       raise SystemExit(f"{field_name} parser accepts impossible calendar date: {candidate}")
+
+          fixture_document = json.loads(fixture_path.read_text(encoding="utf-8"))
+          if fixture_document.get("schema_id") != schema.get("$id"):
+              raise SystemExit("learning-event fixtures must target the exact schema identity")
+
+          fixture_cases = fixture_document.get("cases")
+          if not isinstance(fixture_cases, list):
+              raise SystemExit("learning-event fixture manifest must contain a cases array")
+
+          required_fixture_case_names = {
+              "valid_minimal_envelope",
+              "valid_complete_envelope",
+              "invalid_missing_event_id",
+              "invalid_missing_event_type",
+              "invalid_missing_event_version",
+              "invalid_missing_tenant_id",
+              "invalid_missing_occurred_at",
+              "invalid_missing_recorded_at",
+              "invalid_missing_provenance_reference",
+              "invalid_unknown_property",
+              "invalid_empty_event_id",
+              "invalid_short_event_type",
+              "invalid_noncanonical_event_version",
+              "invalid_empty_tenant_id",
+              "invalid_impossible_occurred_at",
+              "invalid_recorded_at_without_offset",
+              "invalid_empty_provenance_reference",
+              "invalid_non_object_data",
+          }
+          fixture_case_names = [case.get("name") for case in fixture_cases if isinstance(case, dict)]
+          if len(fixture_case_names) != len(fixture_cases):
+              raise SystemExit("every learning-event fixture case must be an object")
+          if len(set(fixture_case_names)) != len(fixture_case_names):
+              raise SystemExit("learning-event fixture names must be unique")
+          if set(fixture_case_names) != required_fixture_case_names:
+              missing_cases = sorted(required_fixture_case_names - set(fixture_case_names))
+              unexpected_cases = sorted(set(fixture_case_names) - required_fixture_case_names)
+              raise SystemExit(
+                  f"learning-event fixture coverage mismatch: missing={missing_cases}, unexpected={unexpected_cases}"
+              )
+
+          envelope_validator = Draft202012Validator(schema, format_checker=format_checker)
+          positive_count = 0
+          negative_count = 0
+          for case in fixture_cases:
+              if set(case) != {"name", "expected_valid", "instance"}:
+                  raise SystemExit(f"fixture {case.get('name')!r} has an invalid case shape")
+              expected_valid = case["expected_valid"]
+              if not isinstance(expected_valid, bool):
+                  raise SystemExit(f"fixture {case['name']!r} expected_valid must be boolean")
+
+              errors = list(envelope_validator.iter_errors(case["instance"]))
+              actual_valid = not errors
+              if actual_valid is not expected_valid:
+                  messages = "; ".join(error.message for error in errors) or "no validation errors"
+                  raise SystemExit(
+                      f"fixture {case['name']!r} expected valid={expected_valid}, "
+                      f"got valid={actual_valid}: {messages}"
+                  )
+              if expected_valid:
+                  positive_count += 1
+              else:
+                  negative_count += 1
+
+          if (positive_count, negative_count) != (2, 16):
+              raise SystemExit(
+                  f"fixture manifest must contain 2 positive and 16 negative cases, "
+                  f"got {positive_count} and {negative_count}"
+              )
 
           forbidden = ("TODO: replace", "TBD: replace", "PLACEHOLDER_REPLACE")
           for path in required:

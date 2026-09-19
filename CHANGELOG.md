@@ -10,6 +10,7 @@
 - Repository agent development rules.
 - Product requirements defining customer/integrator jobs, contract support gates, non-goals and release outcomes.
 - Technical requirements defining the artifact-only bounded context, invariants, validation, release, security and consumer ACL requirements.
+- Version-bound learning-event envelope fixtures covering two valid shapes and every current required-field, closed-object, length, semantic-version, timestamp, and data-type rejection invariant.
 
 ### Changed
 
