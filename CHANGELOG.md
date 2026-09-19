@@ -12,6 +12,12 @@
 - Technical requirements defining the artifact-only bounded context, invariants, validation, release, security and consumer ACL requirements.
 - Version-bound learning-event envelope fixtures covering two valid shapes and every current required-field, closed-object, length, semantic-version, timestamp, and data-type rejection invariant.
 - A language-neutral timestamp fixture manifest preserving the repository's five valid and eleven invalid RFC 3339 lexical/calendar cases for future unchanged consumer execution.
+- Rights-safe `cwl_cefr_language_assessment/v1` blueprint, task, and immutable domain-result contracts.
+- CEFR positive/negative fixture gates covering standard-setting, protected content, probability mass, required-domain completeness, blueprint overall-reporting authority, and exact reporting-policy equality.
+- Exact target-language profile/RLD revision requirement; v1 accepts only a calendar-valid dated snapshot or SHA-256-bound identity, so delimited and concatenated mutable aliases fail closed.
+- Executable Draft 2020-12 `date-time` format checking and regressions reject impossible blueprint and result calendar timestamps.
+- Distinct `cefr_aligned`, `cefr_linked`, and certification-decision evidence gates, including governed certification authority and policy references.
+- Proposed ADR 0003, CEFR research doctoring, fixed standards traceability, design specification, implementation plan, and focused regression tests.
 - Dependency-free Rust and TypeScript fixture consumers that execute the unchanged timestamp manifest, verify the exact case identity/distribution and reject inverted expectations.
 
 ### Changed
@@ -25,6 +31,7 @@
 - Pinned the repository quality job to `ubuntu-24.04` after the live exact-head `ubuntu-latest` job remained unassigned with no executed steps; no validation, security, review, or release gate was weakened.
 - Broadened repository Quality from only `develop`/`main` pull-request bases to every pull request so stacked feature PRs receive the same repository-local exact-head validation rather than silently skipping it.
 - Repository Quality now requires PRD and TRD presence so foundational product/technical contracts cannot regress silently.
+- Repository Quality fails closed if the stacked CEFR ADR advances from Proposed before protected integration.
 - Rejected noncanonical leading-zero learning-event versions and added executable regressions for each semantic-version component.
 - Replaced the unhashed validator install command with a binary-only, fully hash-locked dependency set.
 - Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.

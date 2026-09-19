@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/profiles/cwl_cefr_language_assessment/v1/schemas/cefr-result-snapshot.schema.json",
+  "x-cwl-schema-version": "1.0.0",
+  "title": "CWL CEFR Result Snapshot v1",
+  "description": "An immutable domain-profile result reference. Numerical scoring remains in fast-mlsirm and result authority remains in Psychometrics Commons.",
+  "$comment": "Draft 2020-12 validates document structure. The executable profile validator must also resolve the immutable assessment blueprint and enforce its reporting scope, required domains, and exact overall-reporting policy.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "result_reference",
+    "participant_reference",
+    "assessment_session_reference",
+    "instrument_release_reference",
+    "assessment_blueprint_reference",
+    "scoring_profile_reference",
+    "cut_score_revision_reference",
+    "target_language",
+    "claim_status_code",
+    "domain_results",
+    "overall_result",
+    "human_review_status_code",
+    "result_evidence_references",
+    "observed_at",
+    "published_at",
+    "result_digest"
+  ],
+  "properties": {
+    "contract_version": {"const": "cwl_cefr_language_assessment/result_snapshot/v1"},
+    "result_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "participant_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "assessment_session_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "instrument_release_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "assessment_blueprint_reference": {
+      "description": "Exact immutable blueprint authority. A reported overall result is valid only when this blueprint authorizes overall reporting and every required domain is measured.",
+      "$ref": "cefr-common.schema.json#/$defs/opaque_reference"
+    },
+    "scoring_profile_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "cut_score_revision_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "target_language": {"$ref": "cefr-common.schema.json#/$defs/language_tag"},
+    "claim_status_code": {
+      "type": "string",
+      "enum": ["experimental", "cefr_aligned", "cefr_linked", "certification_decision"]
+    },
+    "standard_setting_study_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "linking_validation_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "certification_authority_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "certification_policy_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "domain_results": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain_code", "measurement_status_code"],
+        "properties": {
+          "domain_code": {"$ref": "cefr-common.schema.json#/$defs/activity_domain_code"},
+          "measurement_status_code": {
+            "type": "string",
+            "enum": ["measured", "not_measured", "insufficient_evidence", "invalidated"]
+          },
+          "reported_level_code": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"},
+          "level_probabilities": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 2,
+            "properties": {
+              "pre_a1": {"type": "number", "minimum": 0, "maximum": 1},
+              "a1": {"type": "number", "minimum": 0, "maximum": 1},
+              "a2": {"type": "number", "minimum": 0, "maximum": 1},
+              "a2_plus": {"type": "number", "minimum": 0, "maximum": 1},
+              "b1": {"type": "number", "minimum": 0, "maximum": 1},
+              "b1_plus": {"type": "number", "minimum": 0, "maximum": 1},
+              "b2": {"type": "number", "minimum": 0, "maximum": 1},
+              "b2_plus": {"type": "number", "minimum": 0, "maximum": 1},
+              "c1": {"type": "number", "minimum": 0, "maximum": 1},
+              "c2": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          },
+          "credible_level_set": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "uniqueItems": true,
+            "items": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"}
+          },
+          "standard_error": {"type": "number", "minimum": 0},
+          "descriptor_coverage_references": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "uniqueItems": true,
+            "items": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+          },
+          "limitation_codes": {
+            "type": "array",
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 3, "maxLength": 128}
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"measurement_status_code": {"const": "measured"}},
+              "required": ["measurement_status_code"]
+            },
+            "then": {
+              "required": [
+                "reported_level_code",
+                "level_probabilities",
+                "credible_level_set",
+                "standard_error",
+                "descriptor_coverage_references"
+              ]
+            },
+            "else": {
+              "not": {
+                "anyOf": [
+                  {"required": ["reported_level_code"]},
+                  {"required": ["level_probabilities"]},
+                  {"required": ["credible_level_set"]},
+                  {"required": ["standard_error"]},
+                  {"required": ["descriptor_coverage_references"]}
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "overall_result": {
+      "description": "Structural result envelope. The executable validator must resolve assessment_blueprint_reference before accepting any reported overall result.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reporting_status_code", "required_domain_completeness_code", "reason_code"],
+      "properties": {
+        "reporting_status_code": {"type": "string", "enum": ["reported", "not_reported"]},
+        "required_domain_completeness_code": {"type": "string", "enum": ["complete", "incomplete", "unknown"]},
+        "reason_code": {"type": "string", "minLength": 3, "maxLength": 128},
+        "reported_level_code": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"},
+        "level_probabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 2,
+          "properties": {
+            "pre_a1": {"type": "number", "minimum": 0, "maximum": 1},
+            "a1": {"type": "number", "minimum": 0, "maximum": 1},
+            "a2": {"type": "number", "minimum": 0, "maximum": 1},
+            "a2_plus": {"type": "number", "minimum": 0, "maximum": 1},
+            "b1": {"type": "number", "minimum": 0, "maximum": 1},
+            "b1_plus": {"type": "number", "minimum": 0, "maximum": 1},
+            "b2": {"type": "number", "minimum": 0, "maximum": 1},
+            "b2_plus": {"type": "number", "minimum": 0, "maximum": 1},
+            "c1": {"type": "number", "minimum": 0, "maximum": 1},
+            "c2": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        },
+        "credible_level_set": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"}
+        },
+        "reporting_policy_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"reporting_status_code": {"const": "reported"}},
+            "required": ["reporting_status_code"]
+          },
+          "then": {
+            "properties": {"required_domain_completeness_code": {"const": "complete"}},
+            "required": [
+              "reported_level_code",
+              "level_probabilities",
+              "credible_level_set",
+              "reporting_policy_reference"
+            ]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {"required": ["reported_level_code"]},
+                {"required": ["level_probabilities"]},
+                {"required": ["credible_level_set"]},
+                {"required": ["reporting_policy_reference"]}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "human_review_status_code": {"type": "string", "enum": ["not_required", "required", "completed"]},
+    "result_evidence_references": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+    },
+    "measurement_limitation_codes": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 3, "maxLength": 128}
+    },
+    "observed_at": {"$ref": "cefr-common.schema.json#/$defs/date_time"},
+    "published_at": {"$ref": "cefr-common.schema.json#/$defs/date_time"},
+    "result_digest": {"$ref": "cefr-common.schema.json#/$defs/sha256_digest"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"claim_status_code": {"enum": ["cefr_linked", "certification_decision"]}},
+        "required": ["claim_status_code"]
+      },
+      "then": {"required": ["standard_setting_study_reference", "linking_validation_reference"]}
+    },
+    {
+      "if": {
+        "properties": {"claim_status_code": {"const": "certification_decision"}},
+        "required": ["claim_status_code"]
+      },
+      "then": {
+        "required": ["certification_authority_reference", "certification_policy_reference"],
+        "properties": {
+          "overall_result": {
+            "properties": {"reporting_status_code": {"const": "reported"}}
+          }
+        }
+      }
+    }
+  ]
+}

@@ -70,6 +70,7 @@ jobs:
               Path("docs/TRD.md"),
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/adr/0003-cefr-language-assessment-profile.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
               Path("docs/index.md"),
               Path("docs/product-technical-gap-baseline.md"),
@@ -105,6 +106,14 @@ jobs:
           ):
               raise SystemExit(
                   "ADR 0001 must have exactly one Proposed status until protected integration establishes authority"
+              )
+
+          cefr_adr = Path("docs/adr/0003-cefr-language-assessment-profile.md").read_text(
+              encoding="utf-8"
+          )
+          if "## Status\n\nProposed." not in cefr_adr:
+              raise SystemExit(
+                  "ADR 0003 must remain Proposed until protected integration establishes the CEFR profile"
               )
 
           schemas = {}
@@ -386,3 +395,11 @@ jobs:
           "$RUNNER_TEMP/timestamp_manifest_rust"
       - name: Execute TypeScript timestamp consumer
         run: node --experimental-strip-types conformance/typescript/timestamp_manifest.test.ts
+      - name: Run CEFR schema and blueprint authority regressions
+        run: python -m unittest -v tests/test_validate_cefr_profile.py
+      - name: Validate CEFR language-assessment profile
+        run: python scripts/validate_cefr_profile.py
+      - name: Compile validator and tests
+        run: python -m compileall -q scripts tests
+      - name: Verify clean diff
+        run: git diff --check
