@@ -21,3 +21,4 @@
 - Rejected noncanonical leading-zero learning-event versions and added executable regressions for each semantic-version component.
 - Replaced the unhashed validator install command with a binary-only, fully hash-locked dependency set.
 - Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.
+- Pinned the JSON Schema validator to the package index's available `4.25.1` binary while retaining the complete hash-locked RFC 3339 backend closure.

@@ -50,7 +50,7 @@ Until the first protected immutable release exists, current branch files are sui
 
 ## Contributor quick start
 
-Repository quality is intentionally lightweight and contract-focused. The canonical validation workflow is [`.github/workflows/quality.yml`](.github/workflows/quality.yml); it uses Python 3 with pinned `jsonschema==4.26.0` and `rfc3339-validator==0.1.4` to validate required documentation, every committed schema, immutable schema identity, semantic-version/path alignment, and timestamp behavior.
+Repository quality is intentionally lightweight and contract-focused. The canonical validation workflow is [`.github/workflows/quality.yml`](.github/workflows/quality.yml); it uses Python 3 with pinned `jsonschema==4.25.1` and `rfc3339-validator==0.1.4` to validate required documentation, every committed schema, immutable schema identity, semantic-version/path alignment, and timestamp behavior.
 
 Before changing or adding a contract:
 
