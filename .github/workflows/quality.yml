@@ -98,6 +98,14 @@ jobs:
           if schema.get("$id") != expected_id:
               raise SystemExit("learning event schema $id must match the immutable version-derived identity")
 
+          event_version_validator = Draft202012Validator(schema["properties"]["event_version"])
+          for candidate in ("0.0.0", "1.0.0", "10.20.30"):
+              if list(event_version_validator.iter_errors(candidate)):
+                  raise SystemExit(f"event_version rejects canonical semantic version: {candidate}")
+          for candidate in ("01.0.0", "1.00.0", "1.0.00"):
+              if not list(event_version_validator.iter_errors(candidate)):
+                  raise SystemExit(f"event_version accepts noncanonical semantic version: {candidate}")
+
           def parse_contract_timestamp(candidate: str) -> datetime:
               normalized = candidate
               if len(normalized) > 10 and normalized[10] == "t":
