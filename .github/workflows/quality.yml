@@ -72,6 +72,7 @@ jobs:
               Path("docs/adr/0001-contract-authority-boundary.md"),
               Path("docs/adr/0003-cefr-language-assessment-profile.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
+              Path("docs/index.md"),
               Path("docs/product-technical-gap-baseline.md"),
               schema_path,
               fixture_path,
@@ -357,6 +358,33 @@ jobs:
               for marker in forbidden:
                   if marker in text:
                       raise SystemExit(f"unresolved bootstrap marker {marker!r} in {path}")
+
+          documentation_landing = Path("docs/index.md").read_text(encoding="utf-8")
+          mutable_documentation_link = re.compile(
+              r"https://github\.com/ContextualWisdomLab/"
+              r"learning-interoperability-contracts/(?:blob|tree)/(?:main|develop)/"
+          )
+          if mutable_documentation_link.search(documentation_landing):
+              raise SystemExit(
+                  "public documentation landing must not link package documentation "
+                  "through mutable main/develop refs"
+              )
+
+          required_landing_links = {
+              "[Product requirements](PRD.md)",
+              "[Technical requirements](TRD.md)",
+              "[Architecture](ARCHITECTURE.md)",
+              "[Standards traceability](doctoring/STANDARD_TRACEABILITY.md)",
+              "[Product and technical gap baseline](product-technical-gap-baseline.md)",
+          }
+          missing_landing_links = sorted(
+              link for link in required_landing_links if link not in documentation_landing
+          )
+          if missing_landing_links:
+              raise SystemExit(
+                  f"public documentation landing is missing artifact-relative links: "
+                  f"{missing_landing_links}"
+              )
 
           print("learning interoperability bootstrap contract validation passed")
       - name: Execute Rust timestamp consumer
