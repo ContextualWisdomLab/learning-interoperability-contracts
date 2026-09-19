@@ -11,6 +11,7 @@
 - Product requirements defining customer/integrator jobs, contract support gates, non-goals and release outcomes.
 - Technical requirements defining the artifact-only bounded context, invariants, validation, release, security and consumer ACL requirements.
 - Version-bound learning-event envelope fixtures covering two valid shapes and every current required-field, closed-object, length, semantic-version, timestamp, and data-type rejection invariant.
+- A language-neutral timestamp fixture manifest preserving the repository's five valid and eleven invalid RFC 3339 lexical/calendar cases for future unchanged consumer execution.
 
 ### Changed
 

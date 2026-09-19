@@ -46,6 +46,7 @@ jobs:
 
           schema_path = Path("schemas/v1/learning-event.schema.json")
           fixture_path = Path("fixtures/v1/learning_event_envelope_cases.json")
+          timestamp_fixture_path = Path("fixtures/v1/timestamp_format_cases.json")
           required = [
               Path("README.md"),
               Path("AGENTS.md"),
@@ -60,6 +61,7 @@ jobs:
               Path("docs/product-technical-gap-baseline.md"),
               schema_path,
               fixture_path,
+              timestamp_fixture_path,
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
@@ -123,30 +125,75 @@ jobs:
                   normalized = normalized[:-1] + "+00:00"
               return datetime.fromisoformat(normalized)
 
-          valid_timestamps = (
-              "2026-08-19T14:00:00Z",
-              "2026-08-19t14:00:00z",
-              "2024-02-29T23:59:59+14:00",
-              "2026-01-01T00:00:00-05:30",
-              "2026-01-01T00:00:00.123456Z",
+          timestamp_fixture = json.loads(timestamp_fixture_path.read_text(encoding="utf-8"))
+          if timestamp_fixture.get("fixture_contract") != "learning_event_timestamp_v1":
+              raise SystemExit("timestamp fixture contract identity mismatch")
+
+          timestamp_cases = timestamp_fixture.get("timestamp_cases")
+          if not isinstance(timestamp_cases, list):
+              raise SystemExit("timestamp fixture manifest must contain timestamp_cases")
+
+          required_timestamp_case_names = {
+              "valid_utc_uppercase",
+              "valid_utc_lowercase",
+              "valid_leap_day_maximum_offset",
+              "valid_negative_half_hour_offset",
+              "valid_fractional_seconds",
+              "invalid_date_only",
+              "invalid_non_date",
+              "invalid_missing_offset",
+              "invalid_non_leap_day",
+              "invalid_month",
+              "invalid_month_day",
+              "invalid_hour_24",
+              "invalid_minute_60",
+              "invalid_leap_second",
+              "invalid_offset_hour_24",
+              "invalid_offset_minute_60",
+          }
+          timestamp_case_names = [
+              case.get("case_name") for case in timestamp_cases if isinstance(case, dict)
+          ]
+          if len(timestamp_case_names) != len(timestamp_cases):
+              raise SystemExit("every timestamp fixture case must be an object")
+          if len(set(timestamp_case_names)) != len(timestamp_case_names):
+              raise SystemExit("timestamp fixture case names must be unique")
+          if set(timestamp_case_names) != required_timestamp_case_names:
+              raise SystemExit(
+                  "timestamp fixture coverage mismatch: "
+                  f"{sorted(set(timestamp_case_names) ^ required_timestamp_case_names)}"
+              )
+
+          for case in timestamp_cases:
+              if set(case) != {
+                  "case_name",
+                  "timestamp_value",
+                  "expected_valid",
+                  "failure_class",
+              }:
+                  raise SystemExit(f"timestamp fixture {case.get('case_name')!r} has an invalid shape")
+              if not isinstance(case["timestamp_value"], str):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} value must be a string")
+              if not isinstance(case["expected_valid"], bool):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} expected_valid must be boolean")
+              if case["failure_class"] not in (None, "lexical", "calendar"):
+                  raise SystemExit(f"timestamp fixture {case['case_name']!r} has an invalid failure class")
+
+          valid_timestamps = tuple(
+              case["timestamp_value"] for case in timestamp_cases if case["expected_valid"]
           )
-          invalid_timestamps = (
-              "2026-08-19",
-              "not-a-date",
-              "2026-08-19T14:00:00",
-              "2026-02-29T14:00:00Z",
-              "2026-13-01T14:00:00Z",
-              "2026-04-31T14:00:00Z",
-              "2026-01-01T24:00:00Z",
-              "2026-01-01T14:60:00Z",
-              "2026-01-01T14:00:60Z",
-              "2026-01-01T14:00:00+24:00",
-              "2026-01-01T14:00:00+14:60",
+          invalid_timestamps = tuple(
+              case["timestamp_value"] for case in timestamp_cases if not case["expected_valid"]
           )
-          invalid_calendar_timestamps = (
-              "2026-02-29T14:00:00Z",
-              "2026-04-31T14:00:00Z",
+          invalid_calendar_timestamps = tuple(
+              case["timestamp_value"]
+              for case in timestamp_cases
+              if case["failure_class"] == "calendar"
           )
+          if (len(valid_timestamps), len(invalid_timestamps)) != (5, 11):
+              raise SystemExit(
+                  "timestamp fixture manifest must contain 5 valid and 11 invalid cases"
+              )
 
           format_checker = FormatChecker()
           if format_checker.conforms("2026-02-29T14:00:00Z", "date-time"):
