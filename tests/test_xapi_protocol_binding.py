@@ -58,9 +58,11 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
             "statement-payload-leak.json": {("additionalProperties", ())},
             "unknown-surface.json": {("enum", ("surface",))},
             "xapi2-missing-profile-format-version.json": {("required", ())},
+            "xapi2-missing-xapi-version.json": {("required", ())},
             "xapi2-with-profile-format-2.0.json": {
                 ("const", ("xapi_profile_format_version",))
             },
+            "xapi2-with-xapi1-version.json": {("const", ("xapi_version",))},
             "xapi2-with-cmi5-fields.json": {("not", ())},
         }
         self.assertEqual({path.name for path in paths}, set(expected_failures))
