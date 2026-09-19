@@ -47,6 +47,7 @@ jobs:
         run: |
           import json
           import re
+          import subprocess
           from datetime import datetime
           from pathlib import Path
 
@@ -58,6 +59,7 @@ jobs:
           timestamp_fixture_path = Path("fixtures/v1/timestamp_format_cases.json")
           required = [
               Path("README.md"),
+              Path(".gitignore"),
               Path("AGENTS.md"),
               Path("CLAUDE.md"),
               Path("CHANGELOG.md"),
@@ -77,6 +79,19 @@ jobs:
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
               raise SystemExit(f"missing required bootstrap files: {missing}")
+
+          tracked_paths = subprocess.run(
+              ["git", "ls-files"], check=True, capture_output=True, text=True
+          ).stdout.splitlines()
+          tracked_python_artifacts = [
+              path
+              for path in tracked_paths
+              if "__pycache__" in Path(path).parts or path.endswith((".pyc", ".pyo"))
+          ]
+          if tracked_python_artifacts:
+              raise SystemExit(
+                  f"tracked Python runtime artifacts are forbidden: {tracked_python_artifacts}"
+              )
 
           authority_adr = Path("docs/adr/0001-contract-authority-boundary.md").read_text(
               encoding="utf-8"
