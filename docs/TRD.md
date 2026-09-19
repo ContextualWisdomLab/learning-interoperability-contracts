@@ -2,7 +2,7 @@
 
 ## System responsibility
 
-`learning-interoperability-contracts` is an artifact-oriented **Learning Contract Authority** bounded context. It produces versioned, provider-neutral schemas/profiles/mappings, fixtures and generated-client contracts. It is not a network service, runtime database or owner of learning-domain transactional state.
+`learning-interoperability-contracts` is proposed as an artifact-oriented **Learning Contract Authority** bounded context. If accepted through protected integration, it produces versioned, provider-neutral schemas/profiles/mappings, fixtures and generated-client contracts. It is not a network service, runtime database or owner of learning-domain transactional state.
 
 ## Architecture
 

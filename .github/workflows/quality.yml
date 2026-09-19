@@ -68,6 +68,14 @@ jobs:
           if missing:
               raise SystemExit(f"missing required bootstrap files: {missing}")
 
+          authority_adr = Path("docs/adr/0001-contract-authority-boundary.md").read_text(
+              encoding="utf-8"
+          )
+          if "## Status\n\nProposed." not in authority_adr:
+              raise SystemExit(
+                  "ADR 0001 must remain Proposed until protected integration establishes authority"
+              )
+
           schemas = {}
           for path in Path("schemas").rglob("*.json"):
               with path.open(encoding="utf-8") as handle:
