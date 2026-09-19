@@ -23,6 +23,7 @@
 - Pinned the adopted cmi5 Quartz normative source to the official immutable Quartz release commit instead of the mutable development branch.
 - Reconciled the commercialization baseline so the immutable schema identity is distinguished from the still-missing protected release artifact, and portable timestamp conformance remains explicitly blocked until consumer format-assertion fixtures are executable across supported runtimes.
 - Pinned Rust 1.98.1 and Node.js 24.19.0 in repository Quality for cross-language timestamp evidence; hosted exact-head execution and protected release evidence remain required.
+- Ignored Python bytecode/cache output and made repository Quality reject any such tracked runtime artifact.
 - Pinned the repository quality job to `ubuntu-24.04` after the live exact-head `ubuntu-latest` job remained unassigned with no executed steps; no validation, security, review, or release gate was weakened.
 - Broadened repository Quality from only `develop`/`main` pull-request bases to every pull request so stacked feature PRs receive the same repository-local exact-head validation rather than silently skipping it.
 - Repository Quality now requires PRD and TRD presence so foundational product/technical contracts cannot regress silently.
