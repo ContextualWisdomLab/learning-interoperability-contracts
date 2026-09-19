@@ -17,11 +17,11 @@ The current standards portfolio includes xAPI 2.0, cmi5 Quartz compatibility, LT
 ## Documentation
 
 - [README](https://github.com/ContextualWisdomLab/learning-interoperability-contracts#readme) — repository scope and branch model.
-- [Product requirements](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/blob/develop/docs/PRD.md) — customer problem, product principles, support gates and roadmap.
-- [Technical requirements](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/blob/develop/docs/TRD.md) — bounded-context architecture, invariants, validation, supply-chain and release requirements.
-- [Architecture](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/blob/develop/docs/ARCHITECTURE.md) — contract architecture and ownership boundaries.
-- [Standards traceability](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/blob/develop/docs/doctoring/STANDARD_TRACEABILITY.md) — normative standards evidence and adoption status.
-- [Product and technical gap baseline](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/blob/develop/docs/product-technical-gap-baseline.md) — remaining evidence and commercialization gaps.
+- [Product requirements](PRD.md) — customer problem, product principles, support gates and roadmap.
+- [Technical requirements](TRD.md) — bounded-context architecture, invariants, validation, supply-chain and release requirements.
+- [Architecture](ARCHITECTURE.md) — contract architecture and ownership boundaries.
+- [Standards traceability](doctoring/STANDARD_TRACEABILITY.md) — normative standards evidence and adoption status.
+- [Product and technical gap baseline](product-technical-gap-baseline.md) — remaining evidence and commercialization gaps.
 - [Releases](https://github.com/ContextualWisdomLab/learning-interoperability-contracts/releases) — immutable published contract releases when available.
 - [Ask DeepWiki](https://deepwiki.com/ContextualWisdomLab/learning-interoperability-contracts) — repository-grounded questions and code navigation.
 
