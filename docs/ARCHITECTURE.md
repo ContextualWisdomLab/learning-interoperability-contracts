@@ -51,3 +51,5 @@ Consumers integrate through versioned released contracts. They do not copy contr
 ## Persistence and transaction boundaries
 
 This repository owns no relational persistence, database schema, or runtime transaction. Released contract bundles are immutable release aggregates at the artifact/repository boundary. If generated SDK artifacts are introduced, reproducibility and provenance belong to the release pipeline rather than a product database.
+
+Repository conformance consumers are test-only evidence, not SDKs or runtime services. The Rust and TypeScript timestamp consumers read the same committed language-neutral fixture and own no product state, network boundary, generated contract or release authority.

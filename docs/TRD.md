@@ -75,9 +75,10 @@ Current repository Quality must:
 1. check required product/technical/architecture/traceability documents;
 2. validate JSON Schema Draft 2020-12 metaschema semantics rather than JSON syntax only;
 3. load the versioned portable timestamp fixture manifest and execute date-time format assertion plus every declared lexical/calendar case for both learning-event timestamp fields;
-4. execute the version-bound learning-event fixture manifest, including every current envelope rejection invariant, and additional surface-specific valid/invalid fixtures as they are introduced;
-5. run on stacked pull requests as well as protected-default-branch PRs;
-6. check out the exact PR head with persisted credentials disabled.
+4. execute that unchanged manifest in dependency-free Rust and TypeScript consumers, including a deliberately inverted-expectation regression;
+5. execute the version-bound learning-event fixture manifest, including every current envelope rejection invariant, and additional surface-specific valid/invalid fixtures as they are introduced;
+6. run on stacked pull requests as well as protected-default-branch PRs;
+7. check out the exact PR head with persisted credentials disabled.
 
 Executable SDK/conformance code introduced later must reach 100% production statement/branch coverage for touched surfaces and public documentation coverage, with warnings treated as defects rather than suppressed.
 
@@ -113,7 +114,7 @@ No web service, compose stack, k6 target, GPU/CPU math path or Kubernetes runtim
 
 - no protected immutable release bundle/provenance mapping yet;
 - no complete xAPI 2.0 statement/profile conformance surface;
-- no independent Rust and TypeScript consumer runners executing the unchanged portable timestamp fixture manifest;
+- no terminal hosted exact-head Rust and TypeScript timestamp-consumer receipt or released bundle binding that evidence to immutable artifacts;
 - no generated Rust/TypeScript/Python SDK release artifacts;
 - no OpenAPI/AsyncAPI surface where a concrete reusable protocol endpoint/event contract warrants one;
 - no consumer-driven cross-repository compatibility matrix.
