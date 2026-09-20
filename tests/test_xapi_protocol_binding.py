@@ -53,7 +53,10 @@ class XapiProtocolBindingContractTests(unittest.TestCase):
         paths = sorted(INVALID_FIXTURES.glob("*.json"))
         expected_failures = {
             "cmi5-missing-authority.json": {("required", ())},
+            "cmi5-missing-release.json": {("required", ())},
             "cmi5-missing-revision.json": {("required", ())},
+            "cmi5-with-wrong-release.json": {("const", ("cmi5_release",))},
+            "cmi5-with-wrong-revision.json": {("const", ("cmi5_revision",))},
             "cmi5-with-xapi2-authority.json": {("const", ("normative_authority",))},
             "cmi5-with-xapi2-version.json": {("const", ("xapi_version",))},
             "statement-payload-leak.json": {("additionalProperties", ())},
