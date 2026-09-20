@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:contextualwisdomlab:learning-interoperability-contracts:xapi-protocol-binding:1.0.0",
+  "x-cwl-schema-version": "1.0.0",
+  "title": "CWL xAPI protocol binding",
+  "description": "Provider-neutral protocol selection evidence. This contract binds a consumer to canonical xAPI 2.0 or explicit cmi5 Quartz/xAPI 1.0.3 compatibility without carrying statements or rewriting historical records.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "surface",
+    "xapi_version",
+    "xapi_profile_format_version",
+    "normative_authority"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "cwl_xapi_protocol_binding/v1"
+    },
+    "surface": {
+      "enum": ["xapi_2_0", "cmi5_quartz"]
+    },
+    "xapi_version": {
+      "type": "string"
+    },
+    "xapi_profile_format_version": {
+      "const": "1.0.0"
+    },
+    "normative_authority": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cmi5_release": {
+      "const": "quartz-1st-edition"
+    },
+    "cmi5_revision": {
+      "const": "984a9b8"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "surface": {"const": "xapi_2_0"}
+        },
+        "required": ["surface"]
+      },
+      "then": {
+        "properties": {
+          "xapi_version": {"const": "2.0.0"},
+          "normative_authority": {"const": "ISO/IEC/IEEE 39274-1-1:2025"}
+        },
+        "not": {
+          "anyOf": [
+            {"required": ["cmi5_release"]},
+            {"required": ["cmi5_revision"]}
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "surface": {"const": "cmi5_quartz"}
+        },
+        "required": ["surface"]
+      },
+      "then": {
+        "required": ["cmi5_release", "cmi5_revision"],
+        "properties": {
+          "xapi_version": {"const": "1.0.3"},
+          "normative_authority": {"const": "cmi5 Quartz 1st Edition"}
+        }
+      }
+    }
+  ]
+}

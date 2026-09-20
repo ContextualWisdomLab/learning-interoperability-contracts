@@ -12,6 +12,9 @@
 - Technical requirements defining the artifact-only bounded context, invariants, validation, release, security and consumer ACL requirements.
 - Version-bound learning-event envelope fixtures covering two valid shapes and every current required-field, closed-object, length, semantic-version, timestamp, and data-type rejection invariant.
 - A language-neutral timestamp fixture manifest preserving the repository's five valid and eleven invalid RFC 3339 lexical/calendar cases for future unchanged consumer execution.
+- Test-first `cwl_xapi_protocol_binding/v1` contract that keeps canonical xAPI 2.0 and cmi5 Quartz/xAPI 1.0.3 compatibility mutually exclusive without carrying statement payloads or rewriting historical records.
+- An exact two-valid/seventeen-invalid protocol-binding fixture inventory covering valid xAPI 2.0, valid cmi5 Quartz, missing or changed contract identity, missing or cross-bound normative authority, missing or changed cmi5 release/revision identity, missing or changed xAPI and xAPI Profile format versions, cross-version claims in both directions, unknown surfaces, and statement-payload leakage; each invalid fixture is bound to its intended schema keyword and instance path.
+- Proposed ADR 0002 documenting the protocol-binding anti-corruption boundary and current standards evidence.
 - Dependency-free Rust and TypeScript fixture consumers that execute the unchanged timestamp manifest, verify the exact case identity/distribution and reject inverted expectations.
 
 ### Changed
@@ -29,3 +32,5 @@
 - Replaced the unhashed validator install command with a binary-only, fully hash-locked dependency set.
 - Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.
 - Pinned the JSON Schema validator to the package index's available `4.25.1` binary while retaining the complete hash-locked RFC 3339 backend closure.
+- Repository Quality executes the xAPI protocol-binding regression suite on the same exact stacked head.
+- Repository Quality parses exactly one anchored xAPI ADR status declaration and fails closed if it advances from Proposed before protected integration.

@@ -70,6 +70,7 @@ jobs:
               Path("docs/TRD.md"),
               Path("docs/ARCHITECTURE.md"),
               Path("docs/adr/0001-contract-authority-boundary.md"),
+              Path("docs/adr/0002-xapi-protocol-binding.md"),
               Path("docs/doctoring/STANDARD_TRACEABILITY.md"),
               Path("docs/index.md"),
               Path("docs/product-technical-gap-baseline.md"),
@@ -105,6 +106,15 @@ jobs:
           ):
               raise SystemExit(
                   "ADR 0001 must have exactly one Proposed status until protected integration establishes authority"
+              )
+
+          xapi_adr = Path("docs/adr/0002-xapi-protocol-binding.md").read_text(
+              encoding="utf-8"
+          )
+          xapi_statuses = re.findall(r"(?m)^- Status: ([^\r\n]+)$", xapi_adr)
+          if xapi_statuses != ["Proposed"]:
+              raise SystemExit(
+                  "ADR 0002 must have exactly one Proposed status until protected integration establishes the xAPI binding"
               )
 
           schemas = {}
@@ -386,3 +396,5 @@ jobs:
           "$RUNNER_TEMP/timestamp_manifest_rust"
       - name: Execute TypeScript timestamp consumer
         run: node --experimental-strip-types conformance/typescript/timestamp_manifest.test.ts
+      - name: Validate xAPI protocol binding fixtures
+        run: python3 tests/test_xapi_protocol_binding.py
