@@ -34,7 +34,11 @@ A result cannot authorize its own overall level. The executable validator resolv
 - the blueprint declares `overall_and_profile`;
 - every blueprint-required domain has status `measured`;
 - the result's `reporting_policy_reference` exactly equals the blueprint policy;
+- each reported domain and overall label belongs to the blueprint's `supported_level_codes`;
 - all structural and probability/credible-set checks pass.
+
+Probability distributions may retain uncertainty mass outside the reporting range; that
+evidence does not authorize an out-of-range reported label.
 
 ## Rights and data minimization
 

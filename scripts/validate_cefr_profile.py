@@ -289,6 +289,7 @@ def validate_result(value: dict[str, Any]) -> None:
             raise ValueError(
                 f"result {result_field} must equal its immutable blueprint value"
             )
+    supported_level_codes = set(blueprint["supported_level_codes"])
     if value.get("claim_status_code") in {"cefr_linked", "certification_decision"}:
         require_reference(
             value.get("standard_setting_study_reference"),
@@ -335,6 +336,10 @@ def validate_result(value: dict[str, Any]) -> None:
                 raise ValueError("reported domain level must have probability evidence")
             if item["reported_level_code"] not in item["credible_level_set"]:
                 raise ValueError("reported domain level must be in credible set")
+            if item["reported_level_code"] not in supported_level_codes:
+                raise ValueError(
+                    "reported domain level must be supported by the immutable blueprint"
+                )
         elif measured_fields & item.keys():
             raise ValueError("unmeasured domain must not carry an invented score")
     required_domains = set(blueprint["required_domain_codes"])
@@ -368,6 +373,10 @@ def validate_result(value: dict[str, Any]) -> None:
             raise ValueError("reported overall level must have probability evidence")
         if overall.get("reported_level_code") not in overall.get("credible_level_set", []):
             raise ValueError("reported overall level must be in credible set")
+        if overall.get("reported_level_code") not in supported_level_codes:
+            raise ValueError(
+                "reported overall level must be supported by the immutable blueprint"
+            )
     elif any(
         field in overall
         for field in (
@@ -428,7 +437,9 @@ def main() -> None:
         "task-with-copied-descriptor-text.json": validate_task,
         "overall-result-with-incomplete-required-domain.json": validate_result,
         "overall-result-with-profile-only-blueprint.json": validate_result,
+        "overall-result-with-unsupported-level.json": validate_result,
         "result-with-nonunit-probability-mass.json": validate_result,
+        "result-with-unsupported-domain-level.json": validate_result,
     }
     for filename, validator in negative.items():
         try:

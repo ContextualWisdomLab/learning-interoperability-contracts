@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 import unittest
 
 from scripts import validate_cefr_profile as validator
@@ -122,10 +121,8 @@ class CefrProfileValidationTests(unittest.TestCase):
         overall_blueprint = validator.load_json(
             validator.VALID_ROOT / "assessment-blueprint-overall.json"
         )
-        result = copy.deepcopy(
-            validator.load_json(
-                validator.VALID_ROOT / "cefr-result-snapshot-linked-overall.json"
-            )
+        result = validator.load_json(
+            validator.VALID_ROOT / "cefr-result-snapshot-linked-overall.json"
         )
         result["assessment_blueprint_reference"] = overall_blueprint[
             "blueprint_reference"
@@ -135,6 +132,30 @@ class CefrProfileValidationTests(unittest.TestCase):
         ] = "different_overall_reporting_policy"
 
         with self.assertRaises(ValueError):
+            validator.validate_result(result)
+
+    def test_domain_reported_level_must_be_supported_by_blueprint(self) -> None:
+        """Probability evidence cannot authorize an unsupported domain label."""
+        result = validator.load_json(
+            validator.INVALID_ROOT / "result-with-unsupported-domain-level.json"
+        )
+        validator.validate_against_schema(
+            result, validator.SCHEMA_FILENAMES["result"]
+        )
+
+        with self.assertRaisesRegex(ValueError, "supported by"):
+            validator.validate_result(result)
+
+    def test_overall_reported_level_must_be_supported_by_blueprint(self) -> None:
+        """Overall reporting cannot exceed the blueprint-supported label set."""
+        result = validator.load_json(
+            validator.INVALID_ROOT / "overall-result-with-unsupported-level.json"
+        )
+        validator.validate_against_schema(
+            result, validator.SCHEMA_FILENAMES["result"]
+        )
+
+        with self.assertRaisesRegex(ValueError, "supported by"):
             validator.validate_result(result)
 
 

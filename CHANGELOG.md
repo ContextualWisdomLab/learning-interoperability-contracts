@@ -14,6 +14,7 @@
 - A language-neutral timestamp fixture manifest preserving the repository's five valid and eleven invalid RFC 3339 lexical/calendar cases for future unchanged consumer execution.
 - Rights-safe `cwl_cefr_language_assessment/v1` blueprint, task, and immutable domain-result contracts.
 - CEFR positive/negative fixture gates covering standard-setting, protected content, probability mass, required-domain completeness, blueprint overall-reporting authority, and exact reporting-policy equality.
+- CEFR cross-artifact gates reject domain or overall reported labels outside the referenced blueprint's supported level set while preserving out-of-range probability tails as uncertainty evidence.
 - Exact target-language profile/RLD revision requirement; v1 accepts only a calendar-valid dated snapshot or SHA-256-bound identity, so delimited and concatenated mutable aliases fail closed.
 - Executable Draft 2020-12 `date-time` format checking and regressions reject impossible blueprint and result calendar timestamps.
 - Distinct `cefr_aligned`, `cefr_linked`, and certification-decision evidence gates, including governed certification authority and policy references.
