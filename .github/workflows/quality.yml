@@ -85,6 +85,20 @@ jobs:
           tracked_paths = subprocess.run(
               ["git", "ls-files"], check=True, capture_output=True, text=True
           ).stdout.splitlines()
+          trailing_whitespace = []
+          for tracked_path in tracked_paths:
+              tracked_bytes = Path(tracked_path).read_bytes()
+              if b"\0" in tracked_bytes:
+                  continue
+              for line_number, line in enumerate(tracked_bytes.splitlines(), start=1):
+                  if line.endswith((b" ", b"\t")):
+                      trailing_whitespace.append(f"{tracked_path}:{line_number}")
+          if trailing_whitespace:
+              raise SystemExit(
+                  "tracked text has trailing whitespace: "
+                  + ", ".join(trailing_whitespace)
+              )
+
           tracked_python_artifacts = [
               path
               for path in tracked_paths
