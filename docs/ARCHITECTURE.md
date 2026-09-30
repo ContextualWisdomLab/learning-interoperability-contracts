@@ -6,7 +6,7 @@ Primary families: xAPI 2.0, cmi5 Quartz compatibility, LTI 1.3, QTI 3, CASE 1.1,
 
 ## Domain-driven design
 
-**Subdomain:** generic interoperability.  
+**Subdomain:** generic interoperability.
 **Bounded context:** Learning Contract Authority.
 
 The bounded context owns provider-neutral contract identities, versioned schemas/profiles/mappings, conformance fixtures, and reproducible generated-client contracts. It does not own learner state, content state, xAPI statement truth, psychometric computation, or product databases.
