@@ -1,6 +1,6 @@
 # Product and technical gap baseline
 
-Last reconciled: 2026-09-20
+Last reconciled: 2026-10-01
 
 This ledger is derived from the current product boundary, ADRs, standards traceability, open issues, open pull requests, and exact-head GitHub evidence. It is a commercialization planning artifact, not a conformance or certification claim. Live GitHub Check state is intentionally not persisted as `queued`/`running`/`passed` here because that state changes outside the repository; merge decisions must re-fetch the current PR head and live required Checks.
 
@@ -24,6 +24,7 @@ This ledger is derived from the current product boundary, ADRs, standards tracea
 | Generated SDKs and cross-repository conformance | Issue #6 | Planned | No released Rust/TypeScript/Python generated contracts or consumer-driven interoperability proof | Implement after the core CEFR profile, preserving contract-only repository boundary |
 | Release/package evidence | No protected released contract baseline yet | Missing | Consumers cannot pin an immutable supported contract release even though the schema has an immutable logical URN | Establish first release, changelog/version policy, version-to-artifact mapping, provenance/SBOM where applicable, and immutable release receipts |
 | Operability/security | Security/SAST workflows exist; repository-local quality pins `ubuntu-24.04`, uses a hash-locked binary-only validator dependency set, rejects tracked Python bytecode/cache output, validates the public documentation landing and forbids mutable `main`/`develop` package-document links, and no longer excludes stacked PR bases | Live external gate | No runtime service belongs here; committed CI status would become stale immediately and central security/review lanes remain independent gates | Keep repository read-only at runtime and require current-head supply-chain/security/generated-artifact evidence at merge/release time |
+| Tracked-text hygiene | `Learning Contracts Quality` scans every tracked non-binary file and rejects trailing spaces or tabs, including defects already committed on the exact PR head | Enforced on bootstrap writer branch; stacked children require owner-head integration and exact-head revalidation | A clean working tree makes plain `git diff --check` blind to committed whitespace, so predecessor Quality success did not prove this invariant | Preserve the owner gate through ordinary stack integration and require the same exact-head Quality result on each child |
 
 ## DDD/context map
 
