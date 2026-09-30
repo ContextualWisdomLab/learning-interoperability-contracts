@@ -19,6 +19,7 @@
 
 ### Changed
 
+- Repository Quality now rejects trailing spaces and tabs in every tracked non-binary file, including whitespace already committed on the exact PR head.
 - Public documentation navigation now uses artifact-relative links, and repository Quality rejects mutable `main`/`develop` links in the landing page.
 - Repository Quality parses exactly one anchored ADR 0001 status section and fails closed if the proposed authority advances before protected integration.
 - Pinned the adopted cmi5 Quartz normative source to the official immutable Quartz release commit instead of the mutable development branch.
