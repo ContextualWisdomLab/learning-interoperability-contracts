@@ -57,3 +57,5 @@ Official descriptor prose, translations, authored task content, raw responses, a
 - `requirements-contracts-ci-hashes.txt`
 
 The executable gate lives in `.github/workflows/quality.yml`. It installs a minimal hash-locked Draft 2020-12 validator set, resolves schema references offline, validates every fixture structurally, then applies semantic and cross-artifact authority checks.
+
+Each schema uses a semantic-version-derived logical URN and resolves the common schema through its exact URN. These identities do not imply that an immutable release artifact exists; consumers must wait for a version-to-artifact release mapping instead of reading a mutable branch URL.

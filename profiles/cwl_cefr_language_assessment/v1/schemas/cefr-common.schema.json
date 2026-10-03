@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/profiles/cwl_cefr_language_assessment/v1/schemas/cefr-common.schema.json",
+  "$id": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0",
   "x-cwl-schema-version": "1.0.0",
   "title": "CWL CEFR Language Assessment Common Definitions",
   "description": "Reference-only shared definitions. This schema never carries official CEFR descriptor prose, assessment content, responses, or scoring payloads.",

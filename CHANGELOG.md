@@ -35,6 +35,7 @@
 - Broadened repository Quality from only `develop`/`main` pull-request bases to every pull request so stacked feature PRs receive the same repository-local exact-head validation rather than silently skipping it.
 - Repository Quality now requires PRD and TRD presence so foundational product/technical contracts cannot regress silently.
 - Repository Quality fails closed if the stacked CEFR ADR advances from Proposed before protected integration.
+- Replaced mutable `develop` raw-content CEFR schema identities and references with semantic-version-derived logical URNs; an immutable release mapping remains required before consumer adoption.
 - Rejected noncanonical leading-zero learning-event versions and added executable regressions for each semantic-version component.
 - Replaced the unhashed validator install command with a binary-only, fully hash-locked dependency set.
 - Added the RFC 3339 format backend and its complete transitive dependency to the hash lock so timestamp validation cannot depend on ambient runner packages.

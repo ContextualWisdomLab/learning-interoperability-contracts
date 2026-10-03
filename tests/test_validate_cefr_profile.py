@@ -10,6 +10,18 @@ from scripts import validate_cefr_profile as validator
 class CefrProfileValidationTests(unittest.TestCase):
     """Lock structural schema and immutable blueprint authorization behavior."""
 
+    def test_schema_identities_do_not_depend_on_mutable_branches(self) -> None:
+        """Schema identities remain immutable before a release artifact exists."""
+        for schema in validator.load_schemas().values():
+            schema_id = schema["$id"]
+            self.assertTrue(
+                schema_id.startswith(
+                    "urn:contextualwisdomlab:learning-interoperability-contracts:"
+                    "cefr-language-assessment:"
+                )
+            )
+            self.assertNotIn("/develop/", schema_id)
+
     def test_blueprint_missing_schema_required_target_language_is_rejected(self) -> None:
         """Custom checks cannot admit a blueprint rejected by Draft 2020-12."""
         blueprint = validator.load_json(

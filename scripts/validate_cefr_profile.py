@@ -18,10 +18,9 @@ PROFILE_ROOT = Path("profiles/cwl_cefr_language_assessment/v1")
 SCHEMA_ROOT = PROFILE_ROOT / "schemas"
 VALID_ROOT = PROFILE_ROOT / "conformance" / "valid"
 INVALID_ROOT = PROFILE_ROOT / "conformance" / "invalid"
-PUBLISHED_PREFIX = (
-    "https://raw.githubusercontent.com/ContextualWisdomLab/"
-    "learning-interoperability-contracts/develop/"
-    "profiles/cwl_cefr_language_assessment/v1/schemas/"
+SCHEMA_ID_PREFIX = (
+    "urn:contextualwisdomlab:learning-interoperability-contracts:"
+    "cefr-language-assessment:"
 )
 FORBIDDEN_KEYS = {
     "descriptor_text",
@@ -399,8 +398,9 @@ def validate_schema_metadata() -> None:
             raise ValueError(f"{name} must use JSON Schema Draft 2020-12")
         if schema.get("x-cwl-schema-version") != "1.0.0":
             raise ValueError(f"{name} must declare schema version 1.0.0")
-        if schema.get("$id") != PUBLISHED_PREFIX + name:
-            raise ValueError(f"{name} has the wrong published $id")
+        schema_name = name.removesuffix(".schema.json")
+        if schema.get("$id") != f"{SCHEMA_ID_PREFIX}{schema_name}:1.0.0":
+            raise ValueError(f"{name} has the wrong immutable logical $id")
         try:
             Draft202012Validator.check_schema(schema)
         except SchemaError as error:

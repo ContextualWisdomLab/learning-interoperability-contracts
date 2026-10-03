@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ContextualWisdomLab/learning-interoperability-contracts/develop/profiles/cwl_cefr_language_assessment/v1/schemas/cefr-result-snapshot.schema.json",
+  "$id": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-result-snapshot:1.0.0",
   "x-cwl-schema-version": "1.0.0",
   "title": "CWL CEFR Result Snapshot v1",
   "description": "An immutable domain-profile result reference. Numerical scoring remains in fast-mlsirm and result authority remains in Psychometrics Commons.",
@@ -28,25 +28,25 @@
   ],
   "properties": {
     "contract_version": {"const": "cwl_cefr_language_assessment/result_snapshot/v1"},
-    "result_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "participant_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "assessment_session_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "instrument_release_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "result_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "participant_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "assessment_session_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "instrument_release_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
     "assessment_blueprint_reference": {
       "description": "Exact immutable blueprint authority. A reported overall result is valid only when this blueprint authorizes overall reporting and every required domain is measured.",
-      "$ref": "cefr-common.schema.json#/$defs/opaque_reference"
+      "$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"
     },
-    "scoring_profile_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "cut_score_revision_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "target_language": {"$ref": "cefr-common.schema.json#/$defs/language_tag"},
+    "scoring_profile_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "cut_score_revision_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "target_language": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/language_tag"},
     "claim_status_code": {
       "type": "string",
       "enum": ["experimental", "cefr_aligned", "cefr_linked", "certification_decision"]
     },
-    "standard_setting_study_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "linking_validation_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "certification_authority_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
-    "certification_policy_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"},
+    "standard_setting_study_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "linking_validation_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "certification_authority_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
+    "certification_policy_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"},
     "domain_results": {
       "type": "array",
       "minItems": 1,
@@ -56,12 +56,12 @@
         "additionalProperties": false,
         "required": ["domain_code", "measurement_status_code"],
         "properties": {
-          "domain_code": {"$ref": "cefr-common.schema.json#/$defs/activity_domain_code"},
+          "domain_code": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/activity_domain_code"},
           "measurement_status_code": {
             "type": "string",
             "enum": ["measured", "not_measured", "insufficient_evidence", "invalidated"]
           },
-          "reported_level_code": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"},
+          "reported_level_code": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/cefr_level_code"},
           "level_probabilities": {
             "type": "object",
             "additionalProperties": false,
@@ -84,7 +84,7 @@
             "minItems": 1,
             "maxItems": 10,
             "uniqueItems": true,
-            "items": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"}
+            "items": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/cefr_level_code"}
           },
           "standard_error": {"type": "number", "minimum": 0},
           "descriptor_coverage_references": {
@@ -92,7 +92,7 @@
             "minItems": 1,
             "maxItems": 256,
             "uniqueItems": true,
-            "items": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+            "items": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"}
           },
           "limitation_codes": {
             "type": "array",
@@ -140,7 +140,7 @@
         "reporting_status_code": {"type": "string", "enum": ["reported", "not_reported"]},
         "required_domain_completeness_code": {"type": "string", "enum": ["complete", "incomplete", "unknown"]},
         "reason_code": {"type": "string", "minLength": 3, "maxLength": 128},
-        "reported_level_code": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"},
+        "reported_level_code": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/cefr_level_code"},
         "level_probabilities": {
           "type": "object",
           "additionalProperties": false,
@@ -163,9 +163,9 @@
           "minItems": 1,
           "maxItems": 10,
           "uniqueItems": true,
-          "items": {"$ref": "cefr-common.schema.json#/$defs/cefr_level_code"}
+          "items": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/cefr_level_code"}
         },
-        "reporting_policy_reference": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+        "reporting_policy_reference": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"}
       },
       "allOf": [
         {
@@ -201,7 +201,7 @@
       "minItems": 1,
       "maxItems": 256,
       "uniqueItems": true,
-      "items": {"$ref": "cefr-common.schema.json#/$defs/opaque_reference"}
+      "items": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/opaque_reference"}
     },
     "measurement_limitation_codes": {
       "type": "array",
@@ -209,9 +209,9 @@
       "uniqueItems": true,
       "items": {"type": "string", "minLength": 3, "maxLength": 128}
     },
-    "observed_at": {"$ref": "cefr-common.schema.json#/$defs/date_time"},
-    "published_at": {"$ref": "cefr-common.schema.json#/$defs/date_time"},
-    "result_digest": {"$ref": "cefr-common.schema.json#/$defs/sha256_digest"}
+    "observed_at": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/date_time"},
+    "published_at": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/date_time"},
+    "result_digest": {"$ref": "urn:contextualwisdomlab:learning-interoperability-contracts:cefr-language-assessment:cefr-common:1.0.0#/$defs/sha256_digest"}
   },
   "allOf": [
     {
