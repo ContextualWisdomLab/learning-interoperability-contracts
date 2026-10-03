@@ -91,7 +91,7 @@ Key evidence rules:
 
 ## Branch and release authority
 
-Product work targets `develop`. Promotion to `main` occurs only through the repository's protected process after exact-head validation and applicable review/security gates. A source commit on either branch is not automatically a published consumer release; release/version/artifact provenance must agree on the exact protected source.
+Product work targets `develop`. Promotion to `main` is intended to occur only through protected governance after exact-head validation and applicable review/security gates; live evidence currently shows `develop` is not protected, so no open PR is merge-ready until that repository setting is repaired. A source commit on either branch is not automatically a published consumer release; release/version/artifact provenance must agree on the exact governed source.
 
 ## License
 
