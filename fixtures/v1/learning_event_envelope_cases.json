@@ -184,6 +184,48 @@
       }
     },
     {
+      "name": "invalid_empty_subject_reference",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "subject_reference": "",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_empty_correlation_id",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "correlation_id": "",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
+      "name": "invalid_empty_causation_id",
+      "expected_valid": false,
+      "instance": {
+        "event_id": "event-001",
+        "event_type": "learning.activity.completed",
+        "event_version": "1.0.0",
+        "tenant_id": "tenant-001",
+        "occurred_at": "2026-01-01T00:00:00Z",
+        "recorded_at": "2026-01-01T00:00:01Z",
+        "causation_id": "",
+        "provenance_reference": "provenance-001"
+      }
+    },
+    {
       "name": "invalid_impossible_occurred_at",
       "expected_valid": false,
       "instance": {
