@@ -322,6 +322,9 @@ jobs:
               "invalid_short_event_type",
               "invalid_noncanonical_event_version",
               "invalid_empty_tenant_id",
+              "invalid_empty_subject_reference",
+              "invalid_empty_correlation_id",
+              "invalid_empty_causation_id",
               "invalid_impossible_occurred_at",
               "invalid_recorded_at_without_offset",
               "invalid_empty_provenance_reference",
@@ -362,9 +365,9 @@ jobs:
               else:
                   negative_count += 1
 
-          if (positive_count, negative_count) != (2, 16):
+          if (positive_count, negative_count) != (2, 19):
               raise SystemExit(
-                  f"fixture manifest must contain 2 positive and 16 negative cases, "
+                  f"fixture manifest must contain 2 positive and 19 negative cases, "
                   f"got {positive_count} and {negative_count}"
               )
 
