@@ -16,6 +16,7 @@
 
 ### Changed
 
+- Reject empty `subject_reference`, `correlation_id`, and `causation_id` strings in the v1 learning-event envelope while retaining `null` as the explicit absence value.
 - Repository Quality now rejects trailing spaces and tabs in every tracked non-binary file, including whitespace already committed on the exact PR head.
 - Repository Quality now fetches the PR base and applies `git diff --check` to the complete base-to-head range instead of only the clean checkout worktree.
 - Public documentation navigation now uses artifact-relative links, and repository Quality rejects mutable `main`/`develop` links in the landing page.
