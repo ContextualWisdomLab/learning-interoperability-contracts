@@ -1,0 +1,7 @@
+{
+  "contract_id": "cwl_xapi_protocol_binding/v1",
+  "surface": "legacy_xapi",
+  "xapi_version": "1.0.3",
+  "xapi_profile_format_version": "1.0.0",
+  "normative_authority": "legacy"
+}
