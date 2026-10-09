@@ -20,7 +20,8 @@ The current portfolio tracks:
 - QTI 3;
 - CASE 1.1;
 - Open Badges 3.0;
-- CLR 2.0; and
+- CLR 2.0;
+- CEFR language-assessment metadata; and
 - accessibility-related contract metadata.
 
 A standards name in this list records adoption intent or contract scope. It is **not** by itself implementation, conformance, certification, endorsement, or production evidence.
@@ -32,6 +33,10 @@ The foundation includes a versioned learning-domain event envelope at:
 `schemas/v1/learning-event.schema.json`
 
 Its logical identity is version-derived rather than branch-derived, and repository quality checks validate JSON Schema Draft 2020-12 semantics plus an executable RFC 3339/date-time boundary. The contract and its maturity remain source evidence until protected integration and an immutable release establish a distributable consumer authority.
+
+## Candidate profiles
+
+- `profiles/cwl_cefr_language_assessment/v1` defines a rights-safe CEFR assessment blueprint, task metadata, immutable domain-result snapshot, and executable fixtures. It stores opaque references rather than official descriptor prose, task content, responses, media, or numerical scoring payloads. This Draft-branch surface is a candidate, not a released or certified profile.
 
 ## How products should consume contracts
 
